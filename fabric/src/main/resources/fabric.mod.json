@@ -3,15 +3,15 @@
   "id": "fated_inventory",
   "version": "${version}",
   "name": "Fated Inventory",
-  "description": "This is an example description! Tell everyone what your mod is about!",
+  "description": "A unique take on preserving the inventory on death",
   "authors": [
-    "Me!"
+    "kyleplo"
   ],
   "contact": {
-    "homepage": "https://fabricmc.net/",
-    "sources": "https://github.com/FabricMC/fabric-example-mod"
+    "homepage": "https://modrinth.com/mod/fated-inventory",
+    "sources": "https://github.com/kyleplo/fated-inventory"
   },
-  "license": "CC0-1.0",
+  "license": "LGPL-3.0",
   "icon": "assets/fated_inventory/icon.png",
   "environment": "*",
   "entrypoints": {
@@ -20,19 +20,19 @@
     ],
     "client": [
       "com.kyleplo.fatedinventory.fabric.client.FatedInventoryFabricClient"
+    ],
+    "cardinal-components": [
+      "com.kyleplo.fatedinventory.fabric.FatedInventoryComponentRegistry"
     ]
   },
-  "mixins": [
-    "fated_inventory.mixins.json"
-  ],
   "depends": {
     "fabricloader": ">=0.16.14",
     "minecraft": "~1.21.1",
-    "java": ">=21",
-    "architectury": ">=13.0.8",
-    "": "*"
+    "java": ">=21"
   },
-  "suggests": {
-    "another-mod": "*"
-  }
+  "custom": {
+        "cardinal-components": [
+            "fated_inventory:fated_inventory"
+        ]
+    }
 }

@@ -1,0 +1,4 @@
+{
+  "replace": false,
+  "values": ["#minecraft:axes", "#minecraft:pickaxes", "#minecraft:hoes", "#minecraft:shovels", "#minecraft:swords", "#c:tools/shear", "minecraft:flint_and_steel", "minecraft:fishing_rod", "minecraft:carrot_on_a_stick", "minecraft:warped_fungus_on_a_stick", "minecraft:brush", "minecraft:elytra"]
+}

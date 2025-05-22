@@ -1,0 +1,8 @@
+{
+    "texture_size": [64, 64],
+	"parent": "fated_inventory:block/fated_altar",
+	"textures": {
+		"0": "fated_inventory:block/fated_altar_2",
+		"particle": "minecraft:block/crying_obsidian"
+	}
+}

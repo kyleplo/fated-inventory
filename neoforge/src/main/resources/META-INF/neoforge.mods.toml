@@ -1,17 +1,17 @@
 modLoader = "javafml"
 loaderVersion = "[4,)"
-#issueTrackerURL = ""
-license = "Insert License Here"
+issueTrackerURL = "https://github.com/kyleplo/fated-inventory/issues"
+license = "LGPL-3.0"
 
 [[mods]]
 modId = "fated_inventory"
 version = "${version}"
 displayName = "Fated Inventory"
-authors = "Me!"
+authors = "kyleplo"
 description = '''
-This is an example description! Tell everyone what your mod is about!
+A unique take on preserving the inventory on death
 '''
-#logoFile = ""
+logoFile = "src/main/resources/assets/fated_inventory/icon.png"
 
 [[dependencies.fated_inventory]]
 modId = "neoforge"
@@ -26,13 +26,3 @@ type = "required"
 versionRange = "[1.21.1,)"
 ordering = "NONE"
 side = "BOTH"
-
-[[dependencies.fated_inventory]]
-modId = "architectury"
-type = "required"
-versionRange = "[13.0.8,)"
-ordering = "AFTER"
-side = "BOTH"
-
-[[mixins]]
-config = "fated_inventory.mixins.json"

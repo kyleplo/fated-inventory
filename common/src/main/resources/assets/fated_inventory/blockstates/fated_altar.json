@@ -1,0 +1,34 @@
+{
+  "variants": {
+    "waterlogged=true,charges=0": {
+      "model": "fated_inventory:block/fated_altar"
+    },
+    "waterlogged=false,charges=0": {
+      "model": "fated_inventory:block/fated_altar"
+    },
+    "waterlogged=true,charges=1": {
+      "model": "fated_inventory:block/fated_altar_1"
+    },
+    "waterlogged=false,charges=1": {
+      "model": "fated_inventory:block/fated_altar_1"
+    },
+    "waterlogged=true,charges=2": {
+      "model": "fated_inventory:block/fated_altar_2"
+    },
+    "waterlogged=false,charges=2": {
+      "model": "fated_inventory:block/fated_altar_2"
+    },
+    "waterlogged=true,charges=3": {
+      "model": "fated_inventory:block/fated_altar_3"
+    },
+    "waterlogged=false,charges=3": {
+      "model": "fated_inventory:block/fated_altar_3"
+    },
+    "waterlogged=true,charges=4": {
+      "model": "fated_inventory:block/fated_altar_4"
+    },
+    "waterlogged=false,charges=4": {
+      "model": "fated_inventory:block/fated_altar_4"
+    }
+  }
+}

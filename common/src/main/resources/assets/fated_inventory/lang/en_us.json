@@ -1,0 +1,18 @@
+{
+    "item.fated_inventory.fated_altar": "Altar of Fate",
+    "block.fated_inventory.fated_altar": "Altar of Fate",
+    "gui.fated_inventory.fated_altar.fated_sealed": "Your fate has been sealed",
+    "gui.fated_inventory.fated_inventory.items_retrievable": "Some of your items are safe with your fate",
+    "gui.fated_inventory.fated_inventory.experience_retrievable": "Some of your experience is safe with your fate",
+    "gui.fated_inventory.fated_altar.needs_charge": "Charge Required",
+    "subtitles.block.fated_altar.fated_altar.charge": "Altar of fate is charged",
+    "subtitles.block.fated_altar.fated_altar.deplete": "Altar of fate depletes",
+    "subtitles.block.fated_altar.fated_altar.fate_sealed": "Altar of fate seals fate",
+    "subtitles.block.fated_altar.fated_altar.fate_cut": "Shears cut fate",
+    "tag.item.c.tools.shear": "Shears",
+    "tag.item.c.tools": "Tools",
+    "tag.item.c.armors": "Armors",
+    "tag.item.fated_inventory.charges_fated_altar": "Charges the Altar of Fate",
+    "tag.item.fated_inventory.not_saved_in_altar": "Cannot be stored in the Altar of Fate",
+    "tag.item.fated_inventory.allow_modified_components": "Stored in the Altar of Fate even if components change"
+}
