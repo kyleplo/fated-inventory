@@ -15,6 +15,7 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.levelgen.structure.pools.SinglePoolElement;
 import net.minecraft.world.level.levelgen.structure.pools.StructurePoolElement;
 import net.minecraft.world.level.levelgen.structure.pools.StructureTemplatePool;
@@ -62,6 +63,16 @@ public final class FatedInventory {
     @ExpectPlatform
     public static IFatedInventoryContainer getFatedInventoryContainer (Player player) {
         throw new AssertionError();
+    }
+
+    @ExpectPlatform
+    public static List<ItemStack> compatItems (Player player) {
+        return new ArrayList<ItemStack>();
+    }
+
+    @ExpectPlatform
+    public static int compatRemoveMatchingItems (Player player, ItemStack matchItem, int max) {
+        return 0;
     }
 
     public static int experienceLevelsToPoints (float levels) {

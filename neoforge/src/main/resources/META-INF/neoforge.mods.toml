@@ -14,6 +14,13 @@ A unique take on preserving the inventory on death
 logoFile = "src/main/resources/assets/fated_inventory/icon.png"
 
 [[dependencies.fated_inventory]]
+modId = "curios"
+type = "optional"
+versionRange = "[9,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.fated_inventory]]
 modId = "neoforge"
 type = "required"
 versionRange = "[21.1,)"

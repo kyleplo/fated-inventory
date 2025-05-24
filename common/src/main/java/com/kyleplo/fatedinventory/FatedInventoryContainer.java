@@ -54,16 +54,25 @@ public abstract class FatedInventoryContainer implements IFatedInventoryContaine
         this.inventoryList = new ArrayList<FatedInventoryItem>();
     }
 
+    public void removeFromInventory(Inventory inventory, ItemStack matchItem, int max) {
+        max -= inventory.clearOrCountMatchingItems((ItemStack otherItem) -> ItemStack.isSameItemSameComponents(matchItem, otherItem), max, inventory);
+        if (max > 0) {
+            FatedInventory.compatRemoveMatchingItems(null, matchItem, max);
+        }
+    }
+
     public void putInventory(Inventory inventory) {
         inventoryList = FatedInventoryItem.listFromItemStackList(inventory.items, true);
         FatedInventoryItem.listFromItemStackList(inventoryList, inventory.armor, true);
         FatedInventoryItem.listFromItemStackList(inventoryList, inventory.offhand, true);
+        FatedInventoryItem.listFromItemStackList(inventoryList, FatedInventory.compatItems(inventory.player), true);
     }
 
     public void compareInventory(Inventory inventory) {
         ArrayList<FatedInventoryItem> compareList = FatedInventoryItem.listFromItemStackList(inventory.items, false);
         FatedInventoryItem.listFromItemStackList(compareList, inventory.armor, false);
         FatedInventoryItem.listFromItemStackList(compareList, inventory.offhand, false);
+        FatedInventoryItem.listFromItemStackList(compareList, FatedInventory.compatItems(inventory.player), false);
 
         inventoryList.forEach((FatedInventoryItem item) -> {
             if (item.isEmpty()) {
@@ -77,16 +86,16 @@ public abstract class FatedInventoryContainer implements IFatedInventoryContaine
 
                 if (!item.item.isStackable() && ItemStack.isSameItem(item.item, compareItem.item) && item.item.is(FatedInventoryContainer.ALLOW_MODIFIED_COMPONENTS)) {
                     item.item = compareItem.item.copy();
-                    inventory.clearOrCountMatchingItems((ItemStack otherItem) -> ItemStack.isSameItemSameComponents(compareItem.item, otherItem), 1, inventory);
+                    removeFromInventory(inventory, compareItem.item, 1);
                     compareItem.count -= 1;
                     return;
                 } else if (ItemStack.isSameItemSameComponents(item.item, compareItem.item)) {
                     if (compareItem.count > item.count) {
-                        inventory.clearOrCountMatchingItems((ItemStack otherItem) -> ItemStack.isSameItemSameComponents(item.item, otherItem), item.count, inventory);
+                        removeFromInventory(inventory, item.item, item.count);
                         compareItem.count -= item.count;
                     } else {
                         item.count = compareItem.count;
-                        inventory.clearOrCountMatchingItems((ItemStack otherItem) -> ItemStack.isSameItemSameComponents(item.item, otherItem), item.count, inventory);
+                        removeFromInventory(inventory, item.item, item.count);
                         compareItem.count = 0;
                     }
                     return;
