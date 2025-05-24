@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Optional;
 
 import net.minecraft.core.HolderLookup.Provider;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -84,7 +85,11 @@ public abstract class FatedInventoryContainer implements IFatedInventoryContaine
                     continue;
                 }
 
-                if (!item.item.isStackable() && ItemStack.isSameItem(item.item, compareItem.item) && item.item.is(FatedInventoryContainer.ALLOW_MODIFIED_COMPONENTS)) {
+                if (!item.item.isStackable() && ItemStack.isSameItem(item.item, compareItem.item) && (
+                    item.item.is(FatedInventoryContainer.ALLOW_MODIFIED_COMPONENTS) || 
+                    FatedInventory.config.anyNonstackableAllowsModifiedComponents) ||
+                    (FatedInventory.config.anyDurabilityItemAllowsModifiedComponents && item.item.has(DataComponents.DAMAGE))  
+                ) {
                     item.item = compareItem.item.copy();
                     removeFromInventory(inventory, compareItem.item, 1);
                     compareItem.count -= 1;

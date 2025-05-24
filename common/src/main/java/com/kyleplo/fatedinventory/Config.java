@@ -25,6 +25,8 @@ public class Config {
     public boolean showMessageOnRespawn = true;
     public boolean generateAltarBuildingsInVillages = true;
     public int villageAltarBuildingWeight = 2;
+    public boolean anyNonstackableAllowsModifiedComponents = false;
+    public boolean anyDurabilityItemAllowsModifiedComponents = true;
     public boolean experimentalFlattenContainerItems = false;
 
     public static Config init() {
