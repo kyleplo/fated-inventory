@@ -17,6 +17,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.levelgen.structure.pools.SinglePoolElement;
 import net.minecraft.world.level.levelgen.structure.pools.StructurePoolElement;
 import net.minecraft.world.level.levelgen.structure.pools.StructureTemplatePool;
@@ -32,6 +33,10 @@ public final class FatedInventory {
     }
 
     public static void handlePlayerDeath(Player player, DamageSource source) {
+        if (player.level().getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY)) {
+            return;
+        }
+
         IFatedInventoryContainer fatedInventory = getFatedInventoryContainer(player);
 
         fatedInventory.compareInventory(player.getInventory(), source);
@@ -47,6 +52,10 @@ public final class FatedInventory {
     }
 
     public static void handlePlayerRespawn(Player player) {
+        if (player.level().getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY)) {
+            return;
+        }
+
         IFatedInventoryContainer fatedInventory = getFatedInventoryContainer(player);
         if (fatedInventory.hasStored()) {
             fatedInventory.setHasDied(true);

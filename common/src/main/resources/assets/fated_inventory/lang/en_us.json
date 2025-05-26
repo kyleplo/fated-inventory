@@ -12,7 +12,10 @@
     "tag.item.c.tools.shear": "Shears",
     "tag.item.c.tools": "Tools",
     "tag.item.c.armors": "Armors",
+    "tag.item.c.enchantables": "Enchantable Items",
+    "tag.enchantment.c.soulbound": "Soulbound",
     "tag.item.fated_inventory.charges_fated_altar": "Charges the Altar of Fate",
     "tag.item.fated_inventory.not_saved_in_altar": "Cannot be stored in the Altar of Fate",
-    "tag.item.fated_inventory.allow_modified_components": "Stored in the Altar of Fate even if components change"
+    "tag.item.fated_inventory.allow_modified_components": "Stored in the Altar of Fate even if components change",
+    "tag.enchantment.fated_inventory.not_saved_in_altar": "Cannot be stored in the Altar of Fate"
 }

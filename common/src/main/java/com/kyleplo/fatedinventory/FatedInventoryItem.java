@@ -15,11 +15,13 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.BundleContents;
 import net.minecraft.world.item.component.ItemContainerContents;
+import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentEffectComponents;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 
 public class FatedInventoryItem {
     public static final TagKey<Item> NOT_SAVED_IN_ALTAR = TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath(FatedInventory.MOD_ID, "not_saved_in_altar"));
+    public static final TagKey<Enchantment> NOT_SAVED_IN_ALTAR_ENCHANTMENT = TagKey.create(Registries.ENCHANTMENT, ResourceLocation.fromNamespaceAndPath(FatedInventory.MOD_ID, "not_saved_in_altar"));
 
     public ItemStack item;
     public int count;
@@ -63,7 +65,11 @@ public class FatedInventoryItem {
 
     public static ArrayList<FatedInventoryItem> listFromItemStackList(ArrayList<FatedInventoryItem> items, List<ItemStack> list, boolean flatten) {
         list.forEach((ItemStack item) -> {
-            if (item.isEmpty() || EnchantmentHelper.has(item, EnchantmentEffectComponents.PREVENT_EQUIPMENT_DROP) || item.is(FatedInventoryItem.NOT_SAVED_IN_ALTAR)) {
+            if (item.isEmpty() || 
+                EnchantmentHelper.has(item, EnchantmentEffectComponents.PREVENT_EQUIPMENT_DROP) || 
+                item.is(FatedInventoryItem.NOT_SAVED_IN_ALTAR) ||
+                EnchantmentHelper.hasTag(item, NOT_SAVED_IN_ALTAR_ENCHANTMENT)
+            ) {
                 return;
             }
 
