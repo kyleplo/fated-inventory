@@ -11,6 +11,7 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -55,11 +56,12 @@ public abstract class FatedInventoryContainer implements IFatedInventoryContaine
         this.inventoryList = new ArrayList<FatedInventoryItem>();
     }
 
-    public void removeFromInventory(Inventory inventory, ItemStack matchItem, int max) {
+    public int removeFromInventory(Inventory inventory, ItemStack matchItem, int max, DamageSource damageSource) {
         max -= inventory.clearOrCountMatchingItems((ItemStack otherItem) -> ItemStack.isSameItemSameComponents(matchItem, otherItem), max, inventory);
         if (max > 0) {
-            FatedInventory.compatRemoveMatchingItems(null, matchItem, max);
+            max -= FatedInventory.compatRemoveMatchingItems(inventory.player, matchItem, max, damageSource);
         }
+        return Math.max(max, 0);
     }
 
     public void putInventory(Inventory inventory) {
@@ -69,7 +71,7 @@ public abstract class FatedInventoryContainer implements IFatedInventoryContaine
         FatedInventoryItem.listFromItemStackList(inventoryList, FatedInventory.compatItems(inventory.player), true);
     }
 
-    public void compareInventory(Inventory inventory) {
+    public void compareInventory(Inventory inventory, DamageSource damageSource) {
         ArrayList<FatedInventoryItem> compareList = FatedInventoryItem.listFromItemStackList(inventory.items, false);
         FatedInventoryItem.listFromItemStackList(compareList, inventory.armor, false);
         FatedInventoryItem.listFromItemStackList(compareList, inventory.offhand, false);
@@ -91,17 +93,14 @@ public abstract class FatedInventoryContainer implements IFatedInventoryContaine
                     (FatedInventory.config.anyDurabilityItemAllowsModifiedComponents && item.item.has(DataComponents.DAMAGE))  
                 ) {
                     item.item = compareItem.item.copy();
-                    removeFromInventory(inventory, compareItem.item, 1);
-                    compareItem.count -= 1;
+                    compareItem.count -= removeFromInventory(inventory, compareItem.item, 1, damageSource);
                     return;
                 } else if (ItemStack.isSameItemSameComponents(item.item, compareItem.item)) {
                     if (compareItem.count > item.count) {
-                        removeFromInventory(inventory, item.item, item.count);
-                        compareItem.count -= item.count;
+                        compareItem.count -= removeFromInventory(inventory, item.item, item.count, damageSource);
                     } else {
                         item.count = compareItem.count;
-                        removeFromInventory(inventory, item.item, item.count);
-                        compareItem.count = 0;
+                        compareItem.count -= removeFromInventory(inventory, item.item, item.count, damageSource);
                     }
                     return;
                 }

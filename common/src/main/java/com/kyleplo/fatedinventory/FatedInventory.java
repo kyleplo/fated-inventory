@@ -14,6 +14,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.levelgen.structure.pools.SinglePoolElement;
@@ -30,10 +31,10 @@ public final class FatedInventory {
         FatedInventoryBlocks.initialize();
     }
 
-    public static void handlePlayerDeath(Player player) {
+    public static void handlePlayerDeath(Player player, DamageSource source) {
         IFatedInventoryContainer fatedInventory = getFatedInventoryContainer(player);
 
-        fatedInventory.compareInventory(player.getInventory());
+        fatedInventory.compareInventory(player.getInventory(), source);
 
         int playerExperiencePoints = FatedInventory.experienceLevelsToPoints((float) player.experienceLevel + player.experienceProgress);
         if (playerExperiencePoints < fatedInventory.getExperience()) {
@@ -71,7 +72,7 @@ public final class FatedInventory {
     }
 
     @ExpectPlatform
-    public static int compatRemoveMatchingItems (Player player, ItemStack matchItem, int max) {
+    public static int compatRemoveMatchingItems (Player player, ItemStack matchItem, int max, DamageSource damageSource) {
         return 0;
     }
 

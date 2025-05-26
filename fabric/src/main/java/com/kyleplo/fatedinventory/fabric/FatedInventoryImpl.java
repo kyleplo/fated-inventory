@@ -4,7 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.kyleplo.fatedinventory.IFatedInventoryContainer;
+import com.kyleplo.fatedinventory.fabric.compat.TrinketsCompat;
 
+import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 
@@ -14,10 +17,18 @@ public class FatedInventoryImpl {
     }
 
     public static List<ItemStack> compatItems (Player player) {
+        if (FabricLoader.getInstance().isModLoaded("trinkets")) {
+            return TrinketsCompat.itemsFromTrinketsInventory(player);
+        }
+
         return new ArrayList<ItemStack>();
     }
 
-    public static int compatRemoveMatchingItems (Player player, ItemStack matchItem, int max) {
+    public static int compatRemoveMatchingItems (Player player, ItemStack matchItem, int max, DamageSource damageSource) {
+        if (FabricLoader.getInstance().isModLoaded("trinkets")) {
+            return TrinketsCompat.removeMatchingItemsFromTrinketsInventory(player, matchItem, max);
+        }
+
         return 0;
     }
 }

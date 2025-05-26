@@ -52,7 +52,7 @@ public final class FatedInventoryNeoForge {
 
     private static void onLivingDeath (LivingDeathEvent event) {
         if (event.getEntity() instanceof Player) {
-            FatedInventory.handlePlayerDeath((Player) event.getEntity());
+            FatedInventory.handlePlayerDeath((Player) event.getEntity(), event.getSource());
         }
     }
 

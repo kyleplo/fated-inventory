@@ -28,7 +28,7 @@ public final class FatedInventoryFabric implements ModInitializer {
 
         ServerLivingEntityEvents.ALLOW_DEATH.register(ResourceLocation.fromNamespaceAndPath(FatedInventory.MOD_ID, "handle_player_death"), (LivingEntity entity, DamageSource source, float amount) -> {
             if (entity instanceof Player) {
-                FatedInventory.handlePlayerDeath((Player) entity);
+                FatedInventory.handlePlayerDeath((Player) entity, source);
             }
             return true;
         });
