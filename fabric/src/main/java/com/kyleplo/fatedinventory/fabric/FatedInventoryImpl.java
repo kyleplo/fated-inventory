@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.kyleplo.fatedinventory.IFatedInventoryContainer;
+import com.kyleplo.fatedinventory.compat.AccessoriesCompat;
 import com.kyleplo.fatedinventory.fabric.compat.TrinketsCompat;
 
 import net.fabricmc.loader.api.FabricLoader;
@@ -17,18 +18,28 @@ public class FatedInventoryImpl {
     }
 
     public static List<ItemStack> compatItems (Player player) {
+        ArrayList<ItemStack> items = new ArrayList<ItemStack>();
+
+        if (FabricLoader.getInstance().isModLoaded("accessories")) {
+            items.addAll(AccessoriesCompat.itemsFromAccessoriesInventory(player));
+        }
         if (FabricLoader.getInstance().isModLoaded("trinkets")) {
-            return TrinketsCompat.itemsFromTrinketsInventory(player);
+            items.addAll(TrinketsCompat.itemsFromTrinketsInventory(player));
         }
 
-        return new ArrayList<ItemStack>();
+        return items;
     }
 
     public static int compatRemoveMatchingItems (Player player, ItemStack matchItem, int max, DamageSource damageSource) {
-        if (FabricLoader.getInstance().isModLoaded("trinkets")) {
-            return TrinketsCompat.removeMatchingItemsFromTrinketsInventory(player, matchItem, max);
+        int removed = 0;
+
+        if (FabricLoader.getInstance().isModLoaded("accessories") && removed < max) {
+            removed += AccessoriesCompat.removeMatchingItemsFromAccessoriesInventory(player, matchItem, max, damageSource);
+        }
+        if (FabricLoader.getInstance().isModLoaded("trinkets") && removed < max) {
+            removed += TrinketsCompat.removeMatchingItemsFromTrinketsInventory(player, matchItem, max);
         }
 
-        return 0;
+        return removed;
     }
 }
