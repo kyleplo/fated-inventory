@@ -46,7 +46,7 @@ public class TrinketsCompat {
                         
                         if (removedCount < max && ItemStack.isSameItemSameComponents(matchItem, slotItem) && dropRule != TrinketEnums.DropRule.DESTROY && dropRule != TrinketEnums.DropRule.KEEP) {
                             slotInventory.setItem(i, ItemStack.EMPTY);
-                            removedCount++;
+                            removedCount += slotItem.getCount();
                         }
                     }
                 });

@@ -45,7 +45,7 @@ public class CuriosCompat {
             matchingCurios.forEach((curioSlot -> {
                 DropRule dropRule = CuriosApi.getCurio(curioSlot.stack()).get().getDropRule(curioSlot.slotContext(), damageSource, true);
                 if (removedCount < max && dropRule != DropRule.ALWAYS_KEEP && dropRule != DropRule.DESTROY) {
-                    removedCount++;
+                    removedCount += curioSlot.stack().getCount();
                     curiosInventory.setEquippedCurio(curioSlot.slotContext().identifier(), curioSlot.slotContext().index(), ItemStack.EMPTY);
                 }
             }));

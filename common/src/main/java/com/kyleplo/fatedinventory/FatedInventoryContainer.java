@@ -57,11 +57,12 @@ public abstract class FatedInventoryContainer implements IFatedInventoryContaine
     }
 
     public int removeFromInventory(Inventory inventory, ItemStack matchItem, int max, DamageSource damageSource) {
-        max -= inventory.clearOrCountMatchingItems((ItemStack otherItem) -> ItemStack.isSameItemSameComponents(matchItem, otherItem), max, inventory);
-        if (max > 0) {
-            max -= FatedInventory.compatRemoveMatchingItems(inventory.player, matchItem, max, damageSource);
+        int removed = inventory.clearOrCountMatchingItems((ItemStack otherItem) -> ItemStack.isSameItemSameComponents(matchItem, otherItem), max, inventory);
+        if (removed < max) {
+            removed += FatedInventory.compatRemoveMatchingItems(inventory.player, matchItem, max, damageSource);
         }
-        return Math.max(max, 0);
+//        System.out.println("removed " + removed + "/" + max + " " + matchItem.getItem().getDescriptionId());
+        return Math.max(max - removed, 0);
     }
 
     public void putInventory(Inventory inventory) {
@@ -69,6 +70,10 @@ public abstract class FatedInventoryContainer implements IFatedInventoryContaine
         FatedInventoryItem.listFromItemStackList(inventoryList, inventory.armor, true);
         FatedInventoryItem.listFromItemStackList(inventoryList, inventory.offhand, true);
         FatedInventoryItem.listFromItemStackList(inventoryList, FatedInventory.compatItems(inventory.player), true);
+
+//        inventoryList.forEach((FatedInventoryItem item) -> {
+//            System.out.println(item.item.getDescriptionId() + " x" + item.count);
+//        });
     }
 
     public void compareInventory(Inventory inventory, DamageSource damageSource) {
@@ -76,6 +81,10 @@ public abstract class FatedInventoryContainer implements IFatedInventoryContaine
         FatedInventoryItem.listFromItemStackList(compareList, inventory.armor, false);
         FatedInventoryItem.listFromItemStackList(compareList, inventory.offhand, false);
         FatedInventoryItem.listFromItemStackList(compareList, FatedInventory.compatItems(inventory.player), false);
+
+//        compareList.forEach((FatedInventoryItem item) -> {
+//            System.out.println(item.item.getDescriptionId() + " x" + item.count);
+//        });
 
         inventoryList.forEach((FatedInventoryItem item) -> {
             if (item.isEmpty()) {
@@ -89,16 +98,19 @@ public abstract class FatedInventoryContainer implements IFatedInventoryContaine
 
                 if (!item.item.isStackable() && ItemStack.isSameItem(item.item, compareItem.item) && (
                     item.item.is(FatedInventoryContainer.ALLOW_MODIFIED_COMPONENTS) || 
-                    FatedInventory.config.anyNonstackableAllowsModifiedComponents) ||
-                    (FatedInventory.config.anyDurabilityItemAllowsModifiedComponents && item.item.has(DataComponents.DAMAGE))  
+                    FatedInventory.config.anyNonstackableAllowsModifiedComponents ||
+                    (FatedInventory.config.anyDurabilityItemAllowsModifiedComponents && item.item.has(DataComponents.DAMAGE)))  
                 ) {
+//                    System.out.println(item.item.getDescriptionId() + " is present in both and allows modified components, copying components to fated inventory and removing from real inventory");
                     item.item = compareItem.item.copy();
                     compareItem.count -= removeFromInventory(inventory, compareItem.item, 1, damageSource);
                     return;
                 } else if (ItemStack.isSameItemSameComponents(item.item, compareItem.item)) {
                     if (compareItem.count > item.count) {
+//                        System.out.println(item.item.getDescriptionId() + " has increased, removing the amount in the fated inventory from the real inventory");
                         compareItem.count -= removeFromInventory(inventory, item.item, item.count, damageSource);
                     } else {
+//                        System.out.println(item.item.getDescriptionId() + " has decreased/stayed the same, removing excess from fated inventory and removing all from the real inventory");
                         item.count = compareItem.count;
                         compareItem.count -= removeFromInventory(inventory, item.item, item.count, damageSource);
                     }
@@ -106,6 +118,7 @@ public abstract class FatedInventoryContainer implements IFatedInventoryContaine
                 }
             }
 
+//            System.out.println(item.item.getDescriptionId() + " is no longer in inventory, removing all from fated inventory");
             item.count = 0;
         });
     }
