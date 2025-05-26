@@ -1,4 +1,4 @@
 {
   "replace": false,
-  "values": ["#c:tools", "#c:armors"]
+  "values": ["#c:tools", "#c:armors", "#c:enchantables"]
 }
