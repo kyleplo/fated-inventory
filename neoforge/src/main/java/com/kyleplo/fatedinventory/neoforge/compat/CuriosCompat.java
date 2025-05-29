@@ -10,6 +10,7 @@ import net.minecraft.world.item.ItemStack;
 import top.theillusivec4.curios.api.CuriosApi;
 import top.theillusivec4.curios.api.SlotResult;
 import top.theillusivec4.curios.api.type.capability.ICuriosItemHandler;
+import top.theillusivec4.curios.api.type.capability.ICurio;
 import top.theillusivec4.curios.api.type.capability.ICurio.DropRule;
 import top.theillusivec4.curios.api.type.inventory.ICurioStacksHandler;
 import top.theillusivec4.curios.api.type.inventory.IDynamicStackHandler;
@@ -43,8 +44,16 @@ public class CuriosCompat {
                 return ItemStack.isSameItemSameComponents(item, matchItem);
             });
             matchingCurios.forEach((curioSlot -> {
-                DropRule dropRule = CuriosApi.getCurio(curioSlot.stack()).get().getDropRule(curioSlot.slotContext(), damageSource, true);
-                if (removedCount < max && dropRule != DropRule.ALWAYS_KEEP && dropRule != DropRule.DESTROY) {
+                Optional<ICurio> curio = CuriosApi.getCurio(curioSlot.stack());
+                
+                if (curio.isPresent()) {
+                    DropRule dropRule = curio.get().getDropRule(curioSlot.slotContext(), damageSource, true);
+                    if (dropRule == DropRule.ALWAYS_KEEP || dropRule == DropRule.DESTROY) {
+                        return;
+                    }
+                }
+
+                if (removedCount < max) {
                     removedCount += curioSlot.stack().getCount();
                     curiosInventory.setEquippedCurio(curioSlot.slotContext().identifier(), curioSlot.slotContext().index(), ItemStack.EMPTY);
                 }

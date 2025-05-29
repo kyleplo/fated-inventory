@@ -14,7 +14,7 @@ import com.google.gson.GsonBuilder;
 
 public class Config {
     private static Gson gson = new GsonBuilder().setPrettyPrinting().create();
-    private static String currentVersion = "1.1.0";
+    private static String currentVersion = "1.1.1";
 
     //Config Default Values
     public String CONFIG_VERSION_DO_NOT_TOUCH_PLS = currentVersion;

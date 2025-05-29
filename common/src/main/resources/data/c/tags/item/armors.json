@@ -1,4 +1,7 @@
 {
   "replace": false,
-  "values": ["#minecraft:chest_armor", "#minecraft:foot_armor", "#minecraft:leg_armor", "#minecraft:head_armor"]
+  "values": ["#minecraft:chest_armor", "#minecraft:foot_armor", "#minecraft:leg_armor", "#minecraft:head_armor", {
+    "id": "#forge:armors",
+    "required": false
+  }]
 }
