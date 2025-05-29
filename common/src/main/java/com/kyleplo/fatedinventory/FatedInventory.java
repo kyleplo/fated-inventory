@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.kyleplo.fatedinventory.blocks.FatedInventoryBlocks;
+import com.kyleplo.fatedinventory.mixin.StructureTemplatePoolMixin;
 import com.mojang.datafixers.util.Pair;
 
 import dev.architectury.injectables.annotations.ExpectPlatform;
@@ -100,11 +101,11 @@ public final class FatedInventory {
             Registry<StructureTemplatePool> templatePools = server.registryAccess().registry(Registries.TEMPLATE_POOL).get();
 			Registry<StructureProcessorList> processorLists = server.registryAccess().registry(Registries.PROCESSOR_LIST).get();
 
-            addBuildingToPool(templatePools, processorLists, ResourceLocation.withDefaultNamespace("village/desert/houses"), MOD_ID + ":village/houses/altar_desert", config.villageAltarBuildingWeight);
-            addBuildingToPool(templatePools, processorLists, ResourceLocation.withDefaultNamespace("village/plains/houses"), MOD_ID + ":village/houses/altar_plains", config.villageAltarBuildingWeight);
-            addBuildingToPool(templatePools, processorLists, ResourceLocation.withDefaultNamespace("village/savanna/houses"), MOD_ID + ":village/houses/altar_savanna", config.villageAltarBuildingWeight);
-            addBuildingToPool(templatePools, processorLists, ResourceLocation.withDefaultNamespace("village/snowy/houses"), MOD_ID + ":village/houses/altar_snowy", config.villageAltarBuildingWeight);
-            addBuildingToPool(templatePools, processorLists, ResourceLocation.withDefaultNamespace("village/taiga/houses"), MOD_ID + ":village/houses/altar_taiga", config.villageAltarBuildingWeight);
+            addBuildingToPool(templatePools, processorLists, new ResourceLocation("village/desert/houses"), MOD_ID + ":village/houses/altar_desert", config.villageAltarBuildingWeight);
+            addBuildingToPool(templatePools, processorLists, new ResourceLocation("village/plains/houses"), MOD_ID + ":village/houses/altar_plains", config.villageAltarBuildingWeight);
+            addBuildingToPool(templatePools, processorLists, new ResourceLocation("village/savanna/houses"), MOD_ID + ":village/houses/altar_savanna", config.villageAltarBuildingWeight);
+            addBuildingToPool(templatePools, processorLists, new ResourceLocation("village/snowy/houses"), MOD_ID + ":village/houses/altar_snowy", config.villageAltarBuildingWeight);
+            addBuildingToPool(templatePools, processorLists, new ResourceLocation("village/taiga/houses"), MOD_ID + ":village/houses/altar_taiga", config.villageAltarBuildingWeight);
         }
     }
 
@@ -115,7 +116,7 @@ public final class FatedInventory {
         if (pool == null)
             return;
 
-        ResourceLocation emptyProcessor = ResourceLocation.fromNamespaceAndPath("minecraft", "empty");
+        ResourceLocation emptyProcessor = new ResourceLocation("minecraft", "empty");
         Holder<StructureProcessorList> processorHolder = processorListRegistry
                 .getHolderOrThrow(ResourceKey.create(Registries.PROCESSOR_LIST, emptyProcessor));
 
@@ -123,11 +124,11 @@ public final class FatedInventory {
                 .apply(StructureTemplatePool.Projection.RIGID);
 
         for (int i = 0; i < weight; i++) {
-            pool.templates.add(piece);
+            ((StructureTemplatePoolMixin) pool).getTemplates().add(piece);
         }
 
-        List<Pair<StructurePoolElement, Integer>> listOfPieceEntries = new ArrayList<>(pool.rawTemplates);
+        List<Pair<StructurePoolElement, Integer>> listOfPieceEntries = new ArrayList<>(((StructureTemplatePoolMixin) pool).getTemplateCounts());
         listOfPieceEntries.add(new Pair<>(piece, weight));
-        pool.rawTemplates = listOfPieceEntries;
+        ((StructureTemplatePoolMixin) pool).setTemplateCounts(listOfPieceEntries);
     }
 }

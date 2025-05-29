@@ -1,6 +1,7 @@
 package com.kyleplo.fatedinventory;
 
-import net.minecraft.core.HolderLookup.Provider;
+import java.util.ArrayList;
+
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.player.Inventory;
@@ -17,6 +18,8 @@ public interface IFatedInventoryContainer {
     public void putInventory(Inventory inventory);
     public void compareInventory(Inventory inventory, DamageSource damageSource);
     public void dropInventoryFor(Player player);
-    public CompoundTag saveNbt(CompoundTag nbt, Provider provider);
-    public void readNbt(CompoundTag nbt, Provider provider);
+    public CompoundTag saveNbt(CompoundTag nbt);
+    public void readNbt(CompoundTag nbt);
+    public ArrayList<FatedInventoryItem> getInventoryList();
+    public void setInventoryList(ArrayList<FatedInventoryItem> inventoryList);
 }

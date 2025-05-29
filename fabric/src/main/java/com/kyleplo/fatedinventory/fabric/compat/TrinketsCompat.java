@@ -44,7 +44,7 @@ public class TrinketsCompat {
                         ItemStack slotItem = slotInventory.getItem(i);
                         DropRule dropRule = TrinketsApi.getTrinket(slotItem.getItem()).getDropRule(slotItem, new SlotReference(slotInventory, i), player);
                         
-                        if (removedCount < max && ItemStack.isSameItemSameComponents(matchItem, slotItem) && dropRule != TrinketEnums.DropRule.DESTROY && dropRule != TrinketEnums.DropRule.KEEP) {
+                        if (removedCount < max && ItemStack.isSameItemSameTags(matchItem, slotItem) && dropRule != TrinketEnums.DropRule.DESTROY && dropRule != TrinketEnums.DropRule.KEEP) {
                             slotInventory.setItem(i, ItemStack.EMPTY);
                             removedCount += slotItem.getCount();
                         }

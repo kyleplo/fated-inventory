@@ -36,7 +36,7 @@ public class AccessoriesCompat {
         if (maybeAccessoriesCapability.isPresent()) {
             AccessoriesCapability accessoriesCapability = maybeAccessoriesCapability.get();
             accessoriesCapability.getEquipped((ItemStack accessoryItem) -> {
-                return ItemStack.isSameItemSameComponents(accessoryItem, matchItem);
+                return ItemStack.isSameItemSameTags(accessoryItem, matchItem);
             }).forEach((SlotEntryReference slotEntry) -> {
                 DropRule dropRule = AccessoriesAPI.getAccessory(slotEntry.stack()).getDropRule(slotEntry.stack(), slotEntry.reference(), damageSource);
                 if (removedCount < max && dropRule != DropRule.DESTROY && dropRule != DropRule.KEEP) {

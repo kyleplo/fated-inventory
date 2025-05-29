@@ -3,8 +3,6 @@ package com.kyleplo.fatedinventory;
 import java.util.ArrayList;
 import java.util.Optional;
 
-import net.minecraft.core.HolderLookup.Provider;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -17,12 +15,12 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
-public abstract class FatedInventoryContainer implements IFatedInventoryContainer {
+public class FatedInventoryContainer implements IFatedInventoryContainer {
     protected int experience = 0;
     protected boolean hasDied = false;
     protected ArrayList<FatedInventoryItem> inventoryList = new ArrayList<FatedInventoryItem>();
 
-    public static final TagKey<Item> ALLOW_MODIFIED_COMPONENTS = TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath(FatedInventory.MOD_ID, "allow_modified_components"));
+    public static final TagKey<Item> ALLOW_MODIFIED_COMPONENTS = TagKey.create(Registries.ITEM, new ResourceLocation(FatedInventory.MOD_ID, "allow_modified_components"));
 
     public int getExperience() {
         return this.experience;
@@ -57,7 +55,7 @@ public abstract class FatedInventoryContainer implements IFatedInventoryContaine
     }
 
     public int removeFromInventory(Inventory inventory, ItemStack matchItem, int max, DamageSource damageSource) {
-        int removed = inventory.clearOrCountMatchingItems((ItemStack otherItem) -> ItemStack.isSameItemSameComponents(matchItem, otherItem), max, inventory);
+        int removed = inventory.clearOrCountMatchingItems((ItemStack otherItem) -> ItemStack.isSameItemSameTags(matchItem, otherItem), max, inventory);
         if (removed < max) {
             removed += FatedInventory.compatRemoveMatchingItems(inventory.player, matchItem, max, damageSource);
         }
@@ -66,10 +64,10 @@ public abstract class FatedInventoryContainer implements IFatedInventoryContaine
     }
 
     public void putInventory(Inventory inventory) {
-        inventoryList = FatedInventoryItem.listFromItemStackList(inventory.items, true);
-        FatedInventoryItem.listFromItemStackList(inventoryList, inventory.armor, true);
-        FatedInventoryItem.listFromItemStackList(inventoryList, inventory.offhand, true);
-        FatedInventoryItem.listFromItemStackList(inventoryList, FatedInventory.compatItems(inventory.player), true);
+        inventoryList = FatedInventoryItem.listFromItemStackList(inventory.items);
+        FatedInventoryItem.listFromItemStackList(inventoryList, inventory.armor);
+        FatedInventoryItem.listFromItemStackList(inventoryList, inventory.offhand);
+        FatedInventoryItem.listFromItemStackList(inventoryList, FatedInventory.compatItems(inventory.player));
 
 //        inventoryList.forEach((FatedInventoryItem item) -> {
 //            System.out.println(item.item.getDescriptionId() + " x" + item.count);
@@ -77,10 +75,10 @@ public abstract class FatedInventoryContainer implements IFatedInventoryContaine
     }
 
     public void compareInventory(Inventory inventory, DamageSource damageSource) {
-        ArrayList<FatedInventoryItem> compareList = FatedInventoryItem.listFromItemStackList(inventory.items, false);
-        FatedInventoryItem.listFromItemStackList(compareList, inventory.armor, false);
-        FatedInventoryItem.listFromItemStackList(compareList, inventory.offhand, false);
-        FatedInventoryItem.listFromItemStackList(compareList, FatedInventory.compatItems(inventory.player), false);
+        ArrayList<FatedInventoryItem> compareList = FatedInventoryItem.listFromItemStackList(inventory.items);
+        FatedInventoryItem.listFromItemStackList(compareList, inventory.armor);
+        FatedInventoryItem.listFromItemStackList(compareList, inventory.offhand);
+        FatedInventoryItem.listFromItemStackList(compareList, FatedInventory.compatItems(inventory.player));
 
 //        compareList.forEach((FatedInventoryItem item) -> {
 //            System.out.println(item.item.getDescriptionId() + " x" + item.count);
@@ -99,13 +97,13 @@ public abstract class FatedInventoryContainer implements IFatedInventoryContaine
                 if (!item.item.isStackable() && ItemStack.isSameItem(item.item, compareItem.item) && (
                     item.item.is(FatedInventoryContainer.ALLOW_MODIFIED_COMPONENTS) || 
                     FatedInventory.config.anyNonstackableAllowsModifiedComponents ||
-                    (FatedInventory.config.anyDurabilityItemAllowsModifiedComponents && item.item.has(DataComponents.DAMAGE)))  
+                    (FatedInventory.config.anyDurabilityItemAllowsModifiedComponents && item.item.getTagElement(ItemStack.TAG_DAMAGE) != null))  
                 ) {
 //                    System.out.println(item.item.getDescriptionId() + " is present in both and allows modified components, copying components to fated inventory and removing from real inventory");
                     item.item = compareItem.item.copy();
                     compareItem.count -= removeFromInventory(inventory, compareItem.item, 1, damageSource);
                     return;
-                } else if (ItemStack.isSameItemSameComponents(item.item, compareItem.item)) {
+                } else if (ItemStack.isSameItemSameTags(item.item, compareItem.item)) {
                     if (compareItem.count > item.count) {
 //                        System.out.println(item.item.getDescriptionId() + " has increased, removing the amount in the fated inventory from the real inventory");
                         compareItem.count -= removeFromInventory(inventory, item.item, item.count, damageSource);
@@ -135,31 +133,39 @@ public abstract class FatedInventoryContainer implements IFatedInventoryContaine
         });
     }
 
-    public CompoundTag saveNbt(CompoundTag nbt, Provider provider) {
+    public CompoundTag saveNbt(CompoundTag nbt) {
         nbt.putInt("experience", experience);
         nbt.putBoolean("has_died", hasDied);
 
         ListTag items = new ListTag();
         inventoryList.forEach((FatedInventoryItem item) -> {
             if (!item.isEmpty()) {
-                items.add(item.save(provider));
+                items.add(item.save());
             }
         });
         nbt.put("items", items);
         return nbt;
     }
 
-    public void readNbt(CompoundTag nbt, Provider provider) {
+    public void readNbt(CompoundTag nbt) {
         experience = nbt.getInt("experience");
         hasDied = nbt.getBoolean("has_died");
         
         ListTag items = nbt.getList("items", ListTag.TAG_COMPOUND);
         inventoryList.clear();
         items.forEach((Tag tag) -> {
-            Optional<FatedInventoryItem> parsedItem = FatedInventoryItem.parse(provider, tag);
+            Optional<FatedInventoryItem> parsedItem = FatedInventoryItem.parse(tag);
             if (parsedItem.isPresent()) {
                 inventoryList.add(parsedItem.get());
             }
         });
     }
+
+    public ArrayList<FatedInventoryItem> getInventoryList() {
+        return this.inventoryList;
+    };
+
+    public void setInventoryList(ArrayList<FatedInventoryItem> inventoryList) {
+        this.inventoryList = inventoryList;
+    };
 }

@@ -1,0 +1,7 @@
+{
+  "replace": false,
+  "values": ["#minecraft:trimmable_armor", {
+    "id": "#forge:armors",
+    "required": false
+  }]
+}

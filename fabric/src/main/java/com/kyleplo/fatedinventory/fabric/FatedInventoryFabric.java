@@ -20,13 +20,13 @@ public final class FatedInventoryFabric implements ModInitializer {
         // This code runs as soon as Minecraft is in a mod-load-ready state.
         // However, some things (like resources) may still be uninitialized.
         // Proceed with mild caution.
-        ServerPlayerEvents.AFTER_RESPAWN.register(ResourceLocation.fromNamespaceAndPath(FatedInventory.MOD_ID, "handle_player_respawn"), (ServerPlayer oldPlayer, ServerPlayer newPlayer, boolean alive) -> {
+        ServerPlayerEvents.AFTER_RESPAWN.register(new ResourceLocation(FatedInventory.MOD_ID, "handle_player_respawn"), (ServerPlayer oldPlayer, ServerPlayer newPlayer, boolean alive) -> {
             if (!alive) {
                 FatedInventory.handlePlayerRespawn(newPlayer);
             }
         });
 
-        ServerLivingEntityEvents.ALLOW_DEATH.register(ResourceLocation.fromNamespaceAndPath(FatedInventory.MOD_ID, "handle_player_death"), (LivingEntity entity, DamageSource source, float amount) -> {
+        ServerLivingEntityEvents.ALLOW_DEATH.register(new ResourceLocation(FatedInventory.MOD_ID, "handle_player_death"), (LivingEntity entity, DamageSource source, float amount) -> {
             if (entity instanceof Player) {
                 FatedInventory.handlePlayerDeath((Player) entity, source);
             }

@@ -1,0 +1,13 @@
+{
+    "required": true,
+    "package": "com.kyleplo.fatedinventory.mixin",
+    "compatibilityLevel": "JAVA_17",
+    "minVersion": "0.8",
+    "client": [],
+    "mixins": [
+        "StructureTemplatePoolMixin"
+    ],
+    "injectors": {
+        "defaultRequire": 1
+    }
+}

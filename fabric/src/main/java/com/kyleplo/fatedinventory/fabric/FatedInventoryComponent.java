@@ -1,6 +1,6 @@
 package com.kyleplo.fatedinventory.fabric;
 
-import org.ladysnake.cca.api.v3.component.ComponentV3;
+import dev.onyxstudios.cca.api.v3.component.ComponentV3;
 
 import com.kyleplo.fatedinventory.IFatedInventoryContainer;
 

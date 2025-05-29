@@ -1,0 +1,35 @@
+modLoader = "javafml"
+loaderVersion = "[47,)"
+issueTrackerURL = "https://github.com/kyleplo/fated-inventory/issues"
+license = "LGPL-3.0"
+
+[[mods]]
+modId = "fated_inventory"
+version = "${version}"
+displayName = "Fated Inventory"
+authors = "kyleplo"
+description = '''
+A unique take on preserving the inventory on death
+'''
+logoFile = "src/main/resources/assets/fated_inventory/icon.png"
+
+[[dependencies.fated_inventory]]
+modId = "curios"
+mandatory = false
+versionRange = "[5,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.fated_inventory]]
+modId = "forge"
+mandatory = true
+versionRange = "[47,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.fated_inventory]]
+modId = "minecraft"
+mandatory = true
+versionRange = "[1.20.1,)"
+ordering = "NONE"
+side = "BOTH"
