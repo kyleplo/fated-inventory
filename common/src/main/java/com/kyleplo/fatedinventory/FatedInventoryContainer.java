@@ -17,8 +17,8 @@ import net.minecraft.world.item.ItemStack;
 
 public class FatedInventoryContainer implements IFatedInventoryContainer {
     protected int experience = 0;
-    protected boolean hasDied = false;
     protected ArrayList<FatedInventoryItem> inventoryList = new ArrayList<FatedInventoryItem>();
+    protected ArrayList<FatedInventoryItem> savedInventoryList = new ArrayList<FatedInventoryItem>();
 
     public static final TagKey<Item> ALLOW_MODIFIED_COMPONENTS = TagKey.create(Registries.ITEM, new ResourceLocation(FatedInventory.MOD_ID, "allow_modified_components"));
 
@@ -32,38 +32,29 @@ public class FatedInventoryContainer implements IFatedInventoryContainer {
         }
     }
 
-    public boolean getHasDied() {
-        return this.hasDied;
-    }
-
     public boolean hasStored() {
         return experience > 0 || hasItemsStored();
     }
 
     public boolean hasItemsStored() {
-        return inventoryList.size() > 0;
-    }
-
-    public void setHasDied(boolean hasDied) {
-        this.hasDied = hasDied;
-    }
-
-    public void clear() {
-        this.hasDied = false;
-        this.experience = 0;
-        this.inventoryList = new ArrayList<FatedInventoryItem>();
+        return savedInventoryList.size() > 0;
     }
 
     public int removeFromInventory(Inventory inventory, ItemStack matchItem, int max, DamageSource damageSource) {
-        int removed = inventory.clearOrCountMatchingItems((ItemStack otherItem) -> ItemStack.isSameItemSameTags(matchItem, otherItem), max, inventory);
+        int removed = inventory.clearOrCountMatchingItems((ItemStack otherItem) -> FatedInventoryItem.isCloseEnough(matchItem, otherItem), max, inventory);
         if (removed < max) {
             removed += FatedInventory.compatRemoveMatchingItems(inventory.player, matchItem, max, damageSource);
         }
 //        System.out.println("removed " + removed + "/" + max + " " + matchItem.getItem().getDescriptionId());
-        return Math.max(max - removed, 0);
+        return removed;
     }
 
     public void putInventory(Inventory inventory) {
+        if (!FatedInventory.config.fateStoresItems) {
+            inventoryList = new ArrayList<>();
+            return;
+        }
+
         inventoryList = FatedInventoryItem.listFromItemStackList(inventory.items);
         FatedInventoryItem.listFromItemStackList(inventoryList, inventory.armor);
         FatedInventoryItem.listFromItemStackList(inventoryList, inventory.offhand);
@@ -75,6 +66,11 @@ public class FatedInventoryContainer implements IFatedInventoryContainer {
     }
 
     public void compareInventory(Inventory inventory, DamageSource damageSource) {
+        if (!FatedInventory.config.fateStoresItems) {
+            inventoryList = new ArrayList<>();
+            return;
+        }
+
         ArrayList<FatedInventoryItem> compareList = FatedInventoryItem.listFromItemStackList(inventory.items);
         FatedInventoryItem.listFromItemStackList(compareList, inventory.armor);
         FatedInventoryItem.listFromItemStackList(compareList, inventory.offhand);
@@ -94,35 +90,35 @@ public class FatedInventoryContainer implements IFatedInventoryContainer {
                     continue;
                 }
 
-                if (!item.item.isStackable() && ItemStack.isSameItem(item.item, compareItem.item) && (
-                    item.item.is(FatedInventoryContainer.ALLOW_MODIFIED_COMPONENTS) || 
-                    FatedInventory.config.anyNonstackableAllowsModifiedComponents ||
-                    (FatedInventory.config.anyDurabilityItemAllowsModifiedComponents && item.item.getTagElement(ItemStack.TAG_DAMAGE) != null))  
-                ) {
-//                    System.out.println(item.item.getDescriptionId() + " is present in both and allows modified components, copying components to fated inventory and removing from real inventory");
+                if (FatedInventoryItem.isSameWithModifiedComponents(item, compareItem)) {
+//                    System.out.println(item.item.getDescriptionId() + " is present in both and allows modified components, copying item to saved inventory and removing from real inventory");
                     item.item = compareItem.item.copy();
-                    compareItem.count -= removeFromInventory(inventory, compareItem.item, 1, damageSource);
+                    ItemStack itemCopy = compareItem.item.copy();
+                    int moved = removeFromInventory(inventory, compareItem.item, 1, damageSource);
+                    compareItem.count -= moved;
+                    itemCopy.setCount(moved);
+                    FatedInventoryItem.listFromItemStack(savedInventoryList, itemCopy);
+                    compareItem.item.setCount(0);
                     return;
                 } else if (ItemStack.isSameItemSameTags(item.item, compareItem.item)) {
-                    if (compareItem.count > item.count) {
-//                        System.out.println(item.item.getDescriptionId() + " has increased, removing the amount in the fated inventory from the real inventory");
-                        compareItem.count -= removeFromInventory(inventory, item.item, item.count, damageSource);
-                    } else {
-//                        System.out.println(item.item.getDescriptionId() + " has decreased/stayed the same, removing excess from fated inventory and removing all from the real inventory");
-                        item.count = compareItem.count;
-                        compareItem.count -= removeFromInventory(inventory, item.item, item.count, damageSource);
-                    }
+//                    System.out.println(item.item.getDescriptionId() + " is present in both, moving the amount in the fated inventory from real inventory to saved inventory");
+                    ItemStack itemCopy = compareItem.item.copy();
+                    int moved = removeFromInventory(inventory, item.item, item.count, damageSource);
+                    compareItem.count -= moved;
+                    itemCopy.setCount(moved);
+                    FatedInventoryItem.listFromItemStack(savedInventoryList, itemCopy);
                     return;
                 }
             }
-
-//            System.out.println(item.item.getDescriptionId() + " is no longer in inventory, removing all from fated inventory");
-            item.count = 0;
         });
+
+//        savedInventoryList.forEach((FatedInventoryItem item) -> {
+//            System.out.println(item.item.getDescriptionId() + " x" + item.count);
+//        });
     }
 
     public void dropInventoryFor (Player player) {
-        inventoryList.forEach((FatedInventoryItem item) -> {
+        savedInventoryList.forEach((FatedInventoryItem item) -> {
             int count = item.count;
             while (count > 0) {
                 int toDrop = Math.min(count, item.item.getMaxStackSize());
@@ -131,11 +127,11 @@ public class FatedInventoryContainer implements IFatedInventoryContainer {
                 count -= toDrop;
             }
         });
+        savedInventoryList = new ArrayList<>();
     }
 
     public CompoundTag saveNbt(CompoundTag nbt) {
         nbt.putInt("experience", experience);
-        nbt.putBoolean("has_died", hasDied);
 
         ListTag items = new ListTag();
         inventoryList.forEach((FatedInventoryItem item) -> {
@@ -144,12 +140,19 @@ public class FatedInventoryContainer implements IFatedInventoryContainer {
             }
         });
         nbt.put("items", items);
+
+        ListTag savedItems = new ListTag();
+        savedInventoryList.forEach((FatedInventoryItem item) -> {
+            if (!item.isEmpty()) {
+                savedItems.add(item.save());
+            }
+        });
+        nbt.put("savedItems", savedItems);
         return nbt;
     }
 
     public void readNbt(CompoundTag nbt) {
         experience = nbt.getInt("experience");
-        hasDied = nbt.getBoolean("has_died");
         
         ListTag items = nbt.getList("items", ListTag.TAG_COMPOUND);
         inventoryList.clear();
@@ -159,13 +162,19 @@ public class FatedInventoryContainer implements IFatedInventoryContainer {
                 inventoryList.add(parsedItem.get());
             }
         });
+
+        ListTag savedItems = nbt.getList("savedItems", ListTag.TAG_COMPOUND);
+        savedInventoryList.clear();
+        savedItems.forEach((Tag tag) -> {
+            Optional<FatedInventoryItem> parsedItem = FatedInventoryItem.parse(tag);
+            if (parsedItem.isPresent()) {
+                savedInventoryList.add(parsedItem.get());
+            }
+        });
     }
 
-    public ArrayList<FatedInventoryItem> getInventoryList() {
-        return this.inventoryList;
-    };
-
-    public void setInventoryList(ArrayList<FatedInventoryItem> inventoryList) {
-        this.inventoryList = inventoryList;
-    };
+    public void clearFatedInventory() {
+        experience = 0;
+        inventoryList = new ArrayList<>();
+    }
 }

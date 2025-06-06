@@ -59,8 +59,6 @@ public final class FatedInventory {
 
         IFatedInventoryContainer fatedInventory = getFatedInventoryContainer(player);
         if (fatedInventory.hasStored()) {
-            fatedInventory.setHasDied(true);
-
             if (config.showMessageOnRespawn) {
                 if (fatedInventory.hasItemsStored()) {
                     player.displayClientMessage(Component.translatable("gui.fated_inventory.fated_inventory.items_retrievable"), false);

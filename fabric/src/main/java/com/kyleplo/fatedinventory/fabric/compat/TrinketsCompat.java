@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import com.kyleplo.fatedinventory.FatedInventoryItem;
+
 import dev.emi.trinkets.api.SlotReference;
 import dev.emi.trinkets.api.TrinketComponent;
 import dev.emi.trinkets.api.TrinketEnums;
@@ -44,7 +46,7 @@ public class TrinketsCompat {
                         ItemStack slotItem = slotInventory.getItem(i);
                         DropRule dropRule = TrinketsApi.getTrinket(slotItem.getItem()).getDropRule(slotItem, new SlotReference(slotInventory, i), player);
                         
-                        if (removedCount < max && ItemStack.isSameItemSameTags(matchItem, slotItem) && dropRule != TrinketEnums.DropRule.DESTROY && dropRule != TrinketEnums.DropRule.KEEP) {
+                        if (removedCount < max && FatedInventoryItem.isCloseEnough(matchItem, slotItem) && dropRule != TrinketEnums.DropRule.DESTROY && dropRule != TrinketEnums.DropRule.KEEP) {
                             slotInventory.setItem(i, ItemStack.EMPTY);
                             removedCount += slotItem.getCount();
                         }
