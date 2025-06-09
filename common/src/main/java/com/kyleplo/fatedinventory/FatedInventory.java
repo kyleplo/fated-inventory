@@ -39,16 +39,7 @@ public final class FatedInventory {
 
         IFatedInventoryContainer fatedInventory = getFatedInventoryContainer(player);
 
-        fatedInventory.compareInventory(player.getInventory(), source);
-
-        int playerExperiencePoints = FatedInventory.experienceLevelsToPoints((float) player.experienceLevel + player.experienceProgress);
-        if (playerExperiencePoints < fatedInventory.getExperience()) {
-            player.experienceLevel = 0;
-            player.experienceProgress = 0;
-            fatedInventory.setExperience(playerExperiencePoints);
-        } else {
-            player.giveExperiencePoints(0 - fatedInventory.getExperience());
-        }
+        fatedInventory.compareInventory(player, source);
     }
 
     public static void handlePlayerRespawn(Player player) {
@@ -58,8 +49,6 @@ public final class FatedInventory {
 
         IFatedInventoryContainer fatedInventory = getFatedInventoryContainer(player);
         if (fatedInventory.hasStored()) {
-            fatedInventory.setHasDied(true);
-
             if (config.showMessageOnRespawn) {
                 if (fatedInventory.hasItemsStored()) {
                     player.displayClientMessage(Component.translatable("gui.fated_inventory.fated_inventory.items_retrievable"), false);

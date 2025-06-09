@@ -92,7 +92,7 @@ public class FatedAltarBlock extends Block implements SimpleWaterloggedBlock {
             return ItemInteractionResult.sidedSuccess(level.isClientSide);
         } else if (itemStack.is(FatedAltarBlock.SHEARS)) {
             IFatedInventoryContainer fatedInventory = FatedInventory.getFatedInventoryContainer(player);
-            fatedInventory.clear();
+            fatedInventory.clearFatedInventory();
             itemStack.setDamageValue(itemStack.getDamageValue() + 1);
             level.playSound(null, blockPos.getX(), blockPos.getY(), blockPos.getZ(),
                         FatedInventoryBlocks.FATED_ALTAR_FATE_CUT, SoundSource.BLOCKS, 1.0F, 1.0F);
@@ -115,19 +115,18 @@ public class FatedAltarBlock extends Block implements SimpleWaterloggedBlock {
         if (!level.isClientSide()) {
             IFatedInventoryContainer fatedInventory = FatedInventory.getFatedInventoryContainer(player);
             if (blockState.getValue(CHARGE) > 0 || !FatedInventory.config.fatedAltarRequiresCharges) {
-                if (fatedInventory.getHasDied() && fatedInventory.hasStored()) {
-                    player.giveExperiencePoints(fatedInventory.getExperience());
+                if (fatedInventory.hasStored()) {
                     fatedInventory.dropInventoryFor(player);
 
-                    fatedInventory.setHasDied(false);
+                    if (blockState.getValue(CHARGE) == 1 && FatedInventory.config.fatedAltarRequiresCharges && FatedInventory.config.runningOutOfChargesClearsFate) {
+                        fatedInventory.clearFatedInventory();
+                    }
                     
                     level.setBlock(blockPos, blockState.setValue(CHARGE, Math.max(0, blockState.getValue(CHARGE) - 1)), 3);
                     level.playSound(null, blockPos.getX(), blockPos.getY(), blockPos.getZ(),
                             FatedInventoryBlocks.FATED_ALTAR_DEPLETE, SoundSource.BLOCKS, 1.0F, 1.0F);
                 } else {
-                    fatedInventory.setExperience(FatedInventory
-                            .experienceLevelsToPoints((float) player.experienceLevel + player.experienceProgress));
-                    fatedInventory.putInventory(player.getInventory());
+                    fatedInventory.putInventory(player);
 
                     player.displayClientMessage(Component.translatable("gui.fated_inventory.fated_altar.fated_sealed"),
                             false);

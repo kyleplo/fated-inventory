@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import com.kyleplo.fatedinventory.FatedInventoryItem;
+
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -41,7 +43,7 @@ public class CuriosCompat {
         if (maybeCuriosInventory.isPresent()) {
             ICuriosItemHandler curiosInventory = maybeCuriosInventory.get();
             List<SlotResult> matchingCurios = curiosInventory.findCurios((ItemStack item) -> {
-                return ItemStack.isSameItemSameComponents(item, matchItem);
+                return FatedInventoryItem.isCloseEnough(item, matchItem);
             });
             matchingCurios.forEach((curioSlot -> {
                 Optional<ICurio> curio = CuriosApi.getCurio(curioSlot.stack());

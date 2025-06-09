@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import com.kyleplo.fatedinventory.FatedInventoryItem;
 import io.wispforest.accessories.api.AccessoriesAPI;
 import io.wispforest.accessories.api.AccessoriesCapability;
 import io.wispforest.accessories.api.DropRule;
@@ -36,7 +37,7 @@ public class AccessoriesCompat {
         if (maybeAccessoriesCapability.isPresent()) {
             AccessoriesCapability accessoriesCapability = maybeAccessoriesCapability.get();
             accessoriesCapability.getEquipped((ItemStack accessoryItem) -> {
-                return ItemStack.isSameItemSameComponents(accessoryItem, matchItem);
+                return FatedInventoryItem.isCloseEnough(accessoryItem, matchItem);
             }).forEach((SlotEntryReference slotEntry) -> {
                 DropRule dropRule = AccessoriesAPI.getAccessory(slotEntry.stack()).getDropRule(slotEntry.stack(), slotEntry.reference(), damageSource);
                 if (removedCount < max && dropRule != DropRule.DESTROY && dropRule != DropRule.KEEP) {

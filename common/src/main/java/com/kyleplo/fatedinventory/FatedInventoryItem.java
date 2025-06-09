@@ -59,6 +59,12 @@ public class FatedInventoryItem {
         }
     }
 
+    public static ArrayList<FatedInventoryItem> listFromItemStack(ArrayList<FatedInventoryItem> items, ItemStack item, boolean flatten) {
+        ArrayList<ItemStack> list = new ArrayList<>(1);
+        list.add(item);
+        return listFromItemStackList(items, list, flatten);
+    }
+
     public static ArrayList<FatedInventoryItem> listFromItemStackList(List<ItemStack> list, boolean flatten) {
         return listFromItemStackList(new ArrayList<FatedInventoryItem>(), list, flatten);
     }
@@ -102,5 +108,24 @@ public class FatedInventoryItem {
             items.add(new FatedInventoryItem(item));
         });
         return items;
+    }
+
+    public static boolean isSameWithModifiedComponents(FatedInventoryItem a, FatedInventoryItem b) {
+        return isSameWithModifiedComponents(a.item, b.item);
+    }
+
+    public static boolean isSameWithModifiedComponents(ItemStack a, ItemStack b) {
+        return !a.isStackable() && ItemStack.isSameItem(a, b) && (
+            a.is(FatedInventoryContainer.ALLOW_MODIFIED_COMPONENTS) || 
+            FatedInventory.config.anyNonstackableAllowsModifiedComponents ||
+            (FatedInventory.config.anyDurabilityItemAllowsModifiedComponents && a.has(DataComponents.DAMAGE)));
+    }
+
+    public static boolean isCloseEnough(FatedInventoryItem a, FatedInventoryItem b) {
+        return isCloseEnough(a.item, b.item);
+    }
+
+    public static boolean isCloseEnough(ItemStack a, ItemStack b) {
+        return isSameWithModifiedComponents(a, b) || ItemStack.isSameItemSameComponents(a, b);
     }
 }
