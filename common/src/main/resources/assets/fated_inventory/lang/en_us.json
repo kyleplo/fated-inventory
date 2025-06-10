@@ -17,5 +17,13 @@
     "tag.item.fated_inventory.charges_fated_altar": "Charges the Altar of Fate",
     "tag.item.fated_inventory.not_saved_in_altar": "Cannot be stored in the Altar of Fate",
     "tag.item.fated_inventory.allow_modified_components": "Stored in the Altar of Fate even if components change",
-    "tag.enchantment.fated_inventory.not_saved_in_altar": "Cannot be stored in the Altar of Fate"
+    "tag.enchantment.fated_inventory.not_saved_in_altar": "Cannot be stored in the Altar of Fate",
+    "commands.fated_inventory.fatedinventory.seal.success": "Sealed the fate of 1 player",
+    "commands.fated_inventory.fatedinventory.unseal.success": "Unsealed the fate of 1 player",
+    "commands.fated_inventory.fatedinventory.sealed.success": "%s has %s experience points and %s item(s) sealed: %s",
+    "commands.fated_inventory.fatedinventory.sealed.item": "%s x%s",
+    "commands.fated_inventory.fatedinventory.retrieve.success": "Retrieved stored inventory for 1 player",
+    "commands.fated_inventory.fatedinventory.clear.success": "Cleared stored inventory for 1 player",
+    "commands.fated_inventory.fatedinventory.list.success": "%s has %s experience points and %s item(s) stored: %s",
+    "commands.fated_inventory.fatedinventory.list.item": "%s x%s"
 }

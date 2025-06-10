@@ -7,6 +7,7 @@ import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.attachment.AttachmentType;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
+import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent.PlayerRespawnEvent;
 import net.neoforged.neoforge.event.server.ServerAboutToStartEvent;
@@ -16,6 +17,7 @@ import net.neoforged.neoforge.registries.NeoForgeRegistries;
 import java.util.function.Supplier;
 
 import com.kyleplo.fatedinventory.FatedInventory;
+import com.kyleplo.fatedinventory.FatedInventoryCommand;
 import com.kyleplo.fatedinventory.blocks.neoforge.FatedInventoryBlocksImpl;
 
 @Mod(FatedInventory.MOD_ID)
@@ -30,6 +32,7 @@ public final class FatedInventoryNeoForge {
         NeoForge.EVENT_BUS.addListener(FatedInventoryNeoForge::onLivingDeath);
         NeoForge.EVENT_BUS.addListener(FatedInventoryNeoForge::onPlayerRespawn);
         NeoForge.EVENT_BUS.addListener(FatedInventoryNeoForge::onServerAboutToStart);
+        NeoForge.EVENT_BUS.addListener(FatedInventoryNeoForge::onRegisterCommands);
         modBus.addListener(FatedInventoryNeoForge::onBuildCreativeModeTabContents);
 
         ATTACHMENT_TYPES.register(modBus);
@@ -66,5 +69,9 @@ public final class FatedInventoryNeoForge {
 
     private static void onServerAboutToStart (ServerAboutToStartEvent event) {
         FatedInventory.handleRegisterStructure(event.getServer());
+    }
+
+    private static void onRegisterCommands (RegisterCommandsEvent event) {
+        FatedInventoryCommand.register(event.getDispatcher());
     }
 }

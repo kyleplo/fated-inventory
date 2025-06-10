@@ -1,6 +1,7 @@
 package com.kyleplo.fatedinventory.fabric;
 
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
@@ -12,6 +13,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 
 import com.kyleplo.fatedinventory.FatedInventory;
+import com.kyleplo.fatedinventory.FatedInventoryCommand;
 
 public final class FatedInventoryFabric implements ModInitializer {
 
@@ -36,6 +38,8 @@ public final class FatedInventoryFabric implements ModInitializer {
         ServerLifecycleEvents.SERVER_STARTED.register((MinecraftServer server) -> {
             FatedInventory.handleRegisterStructure(server);
         });
+
+        CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> FatedInventoryCommand.register(dispatcher));
 
         // Run our common setup.
         FatedInventory.init();

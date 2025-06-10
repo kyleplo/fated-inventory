@@ -1,6 +1,7 @@
 package com.kyleplo.fatedinventory;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import net.minecraft.core.HolderLookup.Provider;
@@ -183,5 +184,26 @@ public abstract class FatedInventoryContainer implements IFatedInventoryContaine
     public void clearFatedInventory() {
         experience = 0;
         inventoryList = new ArrayList<>();
+    }
+
+    public void clearStored() {
+        storedExperience = 0;
+        savedInventoryList = new ArrayList<>();
+    }
+
+    public int getExperience() {
+        return experience;
+    }
+
+    public int getStoredExperience() {
+        return storedExperience;
+    }
+
+    public List<FatedInventoryItem> getItems() {
+        return inventoryList;
+    }
+
+    public List<FatedInventoryItem> getStoredItems() {
+        return savedInventoryList;
     }
 }
