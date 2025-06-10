@@ -1,4 +1,19 @@
 {
   "replace": false,
-  "values": ["#c:tools", "#c:armors"]
+  "values": [
+    "#c:tools",
+    "#c:armors",
+    {
+      "id": "ars_nouveau:novice_spell_book",
+      "required": false
+    },
+    { 
+      "id": "ars_nouveau:apprentice_spell_book",
+      "required": false
+    },
+    {
+      "id": "ars_nouveau:archmage_spell_book",
+      "required": false
+    }
+  ]
 }

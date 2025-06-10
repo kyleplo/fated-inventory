@@ -107,7 +107,6 @@ public class FatedAltarBlock extends Block implements SimpleWaterloggedBlock {
             IFatedInventoryContainer fatedInventory = FatedInventory.getFatedInventoryContainer(player);
             if (blockState.getValue(CHARGE) > 0 || !FatedInventory.config.fatedAltarRequiresCharges) {
                 if (fatedInventory.hasStored()) {
-                    player.giveExperiencePoints(fatedInventory.getExperience());
                     fatedInventory.dropInventoryFor(player);
 
                     if (blockState.getValue(CHARGE) == 1 && FatedInventory.config.fatedAltarRequiresCharges && FatedInventory.config.runningOutOfChargesClearsFate) {
@@ -118,9 +117,7 @@ public class FatedAltarBlock extends Block implements SimpleWaterloggedBlock {
                     level.playSound(null, (double) blockPos.getX(), (double) blockPos.getY(), (double) blockPos.getZ(),
                             FatedInventoryBlocks.FATED_ALTAR_DEPLETE.get(), SoundSource.BLOCKS, 1.0F, 1.0F);
                 } else {
-                    fatedInventory.setExperience(FatedInventory
-                            .experienceLevelsToPoints((float) player.experienceLevel + player.experienceProgress));
-                    fatedInventory.putInventory(player.getInventory());
+                    fatedInventory.putInventory(player);
 
                     player.displayClientMessage(Component.translatable("gui.fated_inventory.fated_altar.fated_sealed"),
                             false);

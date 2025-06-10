@@ -1,6 +1,7 @@
 package com.kyleplo.fatedinventory;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import net.minecraft.core.registries.Registries;
@@ -17,23 +18,14 @@ import net.minecraft.world.item.ItemStack;
 
 public class FatedInventoryContainer implements IFatedInventoryContainer {
     protected int experience = 0;
+    protected int storedExperience = 0;
     protected ArrayList<FatedInventoryItem> inventoryList = new ArrayList<FatedInventoryItem>();
     protected ArrayList<FatedInventoryItem> savedInventoryList = new ArrayList<FatedInventoryItem>();
 
     public static final TagKey<Item> ALLOW_MODIFIED_COMPONENTS = TagKey.create(Registries.ITEM, new ResourceLocation(FatedInventory.MOD_ID, "allow_modified_components"));
 
-    public int getExperience() {
-        return this.experience;
-    }
-
-    public void setExperience(int experience) {
-        if (FatedInventory.config.fateStoresXp) {
-            this.experience = experience;
-        }
-    }
-
     public boolean hasStored() {
-        return experience > 0 || hasItemsStored();
+        return storedExperience > 0 || hasItemsStored();
     }
 
     public boolean hasItemsStored() {
@@ -49,32 +41,46 @@ public class FatedInventoryContainer implements IFatedInventoryContainer {
         return removed;
     }
 
-    public void putInventory(Inventory inventory) {
+    public void putInventory(Player player) {
+        if (FatedInventory.config.fateStoresXp) {
+            experience = FatedInventory.experienceLevelsToPoints((float) player.experienceLevel + player.experienceProgress);
+        }
+
         if (!FatedInventory.config.fateStoresItems) {
             inventoryList = new ArrayList<>();
             return;
         }
 
+        Inventory inventory = player.getInventory();
+
         inventoryList = FatedInventoryItem.listFromItemStackList(inventory.items);
         FatedInventoryItem.listFromItemStackList(inventoryList, inventory.armor);
         FatedInventoryItem.listFromItemStackList(inventoryList, inventory.offhand);
-        FatedInventoryItem.listFromItemStackList(inventoryList, FatedInventory.compatItems(inventory.player));
+        FatedInventoryItem.listFromItemStackList(inventoryList, FatedInventory.compatItems(player));
 
 //        inventoryList.forEach((FatedInventoryItem item) -> {
 //            System.out.println(item.item.getDescriptionId() + " x" + item.count);
 //        });
     }
 
-    public void compareInventory(Inventory inventory, DamageSource damageSource) {
+    public void compareInventory(Player player, DamageSource damageSource) {
+        if (FatedInventory.config.fateStoresXp) {
+            int xpToTransfer = Math.min(experience, FatedInventory.experienceLevelsToPoints((float) player.experienceLevel + player.experienceProgress));
+            player.giveExperiencePoints(0 - xpToTransfer);
+            storedExperience += xpToTransfer;
+        }
+
         if (!FatedInventory.config.fateStoresItems) {
             inventoryList = new ArrayList<>();
             return;
         }
 
+        Inventory inventory = player.getInventory();
+
         ArrayList<FatedInventoryItem> compareList = FatedInventoryItem.listFromItemStackList(inventory.items);
         FatedInventoryItem.listFromItemStackList(compareList, inventory.armor);
         FatedInventoryItem.listFromItemStackList(compareList, inventory.offhand);
-        FatedInventoryItem.listFromItemStackList(compareList, FatedInventory.compatItems(inventory.player));
+        FatedInventoryItem.listFromItemStackList(compareList, FatedInventory.compatItems(player));
 
 //        compareList.forEach((FatedInventoryItem item) -> {
 //            System.out.println(item.item.getDescriptionId() + " x" + item.count);
@@ -118,6 +124,9 @@ public class FatedInventoryContainer implements IFatedInventoryContainer {
     }
 
     public void dropInventoryFor (Player player) {
+        player.giveExperiencePoints(storedExperience);
+        storedExperience = 0;
+
         savedInventoryList.forEach((FatedInventoryItem item) -> {
             int count = item.count;
             while (count > 0) {
@@ -132,6 +141,7 @@ public class FatedInventoryContainer implements IFatedInventoryContainer {
 
     public CompoundTag saveNbt(CompoundTag nbt) {
         nbt.putInt("experience", experience);
+        nbt.putInt("storedExperience", storedExperience);
 
         ListTag items = new ListTag();
         inventoryList.forEach((FatedInventoryItem item) -> {
@@ -153,6 +163,7 @@ public class FatedInventoryContainer implements IFatedInventoryContainer {
 
     public void readNbt(CompoundTag nbt) {
         experience = nbt.getInt("experience");
+        storedExperience = nbt.getInt("storedExperience");
         
         ListTag items = nbt.getList("items", ListTag.TAG_COMPOUND);
         inventoryList.clear();
@@ -176,5 +187,26 @@ public class FatedInventoryContainer implements IFatedInventoryContainer {
     public void clearFatedInventory() {
         experience = 0;
         inventoryList = new ArrayList<>();
+    }
+
+    public void clearStored() {
+        storedExperience = 0;
+        savedInventoryList = new ArrayList<>();
+    }
+
+    public int getExperience() {
+        return experience;
+    }
+
+    public int getStoredExperience() {
+        return storedExperience;
+    }
+
+    public List<FatedInventoryItem> getItems() {
+        return inventoryList;
+    }
+
+    public List<FatedInventoryItem> getStoredItems() {
+        return savedInventoryList;
     }
 }

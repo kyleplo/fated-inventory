@@ -40,16 +40,7 @@ public final class FatedInventory {
 
         IFatedInventoryContainer fatedInventory = getFatedInventoryContainer(player);
 
-        fatedInventory.compareInventory(player.getInventory(), source);
-
-        int playerExperiencePoints = FatedInventory.experienceLevelsToPoints((float) player.experienceLevel + player.experienceProgress);
-        if (playerExperiencePoints < fatedInventory.getExperience()) {
-            player.experienceLevel = 0;
-            player.experienceProgress = 0;
-            fatedInventory.setExperience(playerExperiencePoints);
-        } else {
-            player.giveExperiencePoints(0 - fatedInventory.getExperience());
-        }
+        fatedInventory.compareInventory(player, source);
     }
 
     public static void handlePlayerRespawn(Player player) {

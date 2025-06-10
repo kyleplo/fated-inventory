@@ -12,6 +12,7 @@ import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
+import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent.PlayerRespawnEvent;
@@ -21,6 +22,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
 import com.kyleplo.fatedinventory.FatedInventory;
+import com.kyleplo.fatedinventory.FatedInventoryCommand;
 import com.kyleplo.fatedinventory.IFatedInventoryContainer;
 import com.kyleplo.fatedinventory.blocks.forge.FatedInventoryBlocksImpl;
 
@@ -35,6 +37,7 @@ public final class FatedInventoryForge {
         MinecraftForge.EVENT_BUS.addListener(FatedInventoryForge::onLivingDeath);
         MinecraftForge.EVENT_BUS.addListener(FatedInventoryForge::onPlayerRespawn);
         MinecraftForge.EVENT_BUS.addListener(FatedInventoryForge::onServerAboutToStart);
+        MinecraftForge.EVENT_BUS.addListener(FatedInventoryForge::onRegisterCommands);
         modBus.addListener(FatedInventoryForge::onRegisterCapabilities);
         modBus.addListener(FatedInventoryForge::onBuildCreativeModeTabContents);
         MinecraftForge.EVENT_BUS.addGenericListener(Entity.class, FatedInventoryForge::onAttachCapabilities);
@@ -93,5 +96,9 @@ public final class FatedInventoryForge {
 
     private static void onServerAboutToStart (ServerAboutToStartEvent event) {
         FatedInventory.handleRegisterStructure(event.getServer());
+    }
+
+    private static void onRegisterCommands (RegisterCommandsEvent event) {
+        FatedInventoryCommand.register(event.getDispatcher());
     }
 }
