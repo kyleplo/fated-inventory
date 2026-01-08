@@ -10,13 +10,14 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -24,7 +25,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.ScheduledTickAccess;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SimpleWaterloggedBlock;
 import net.minecraft.world.level.block.state.BlockState;
@@ -63,6 +65,7 @@ public class FatedAltarBlock extends Block implements SimpleWaterloggedBlock {
 
     public FatedAltarBlock(Properties properties) {
         super(properties
+                .setId(ResourceKey.create(Registries.BLOCK, ResourceLocation.fromNamespaceAndPath(FatedInventory.MOD_ID, "fated_altar")))
                 .pushReaction(PushReaction.BLOCK)
                 .requiresCorrectToolForDrops()
                 .explosionResistance(1200f)
@@ -83,22 +86,22 @@ public class FatedAltarBlock extends Block implements SimpleWaterloggedBlock {
         return this.defaultBlockState().setValue(WATERLOGGED, fluidState.getType() == Fluids.WATER).setValue(CHARGE, 0);
     }
 
-    protected ItemInteractionResult useItemOn(ItemStack itemStack, BlockState blockState, Level level,
+    protected InteractionResult useItemOn(ItemStack itemStack, BlockState blockState, Level level,
             BlockPos blockPos, Player player, InteractionHand interactionHand, BlockHitResult blockHitResult) {
         if (FatedInventory.config.fatedAltarRequiresCharges && itemStack.is(FatedAltarBlock.CHARGES_FATED_ALTAR)
                 && (Integer) blockState.getValue(CHARGE) < 4) {
             charge(player, level, blockPos, blockState);
             itemStack.consume(1, player);
-            return ItemInteractionResult.sidedSuccess(level.isClientSide);
+            return InteractionResult.SUCCESS;
         } else if (itemStack.is(FatedAltarBlock.SHEARS)) {
             IFatedInventoryContainer fatedInventory = FatedInventory.getFatedInventoryContainer(player);
             fatedInventory.clearFatedInventory();
             itemStack.setDamageValue(itemStack.getDamageValue() + 1);
             level.playSound(null, blockPos.getX(), blockPos.getY(), blockPos.getZ(),
                         FatedInventoryBlocks.FATED_ALTAR_FATE_CUT, SoundSource.BLOCKS, 1.0F, 1.0F);
-            return ItemInteractionResult.sidedSuccess(level.isClientSide);
+            return InteractionResult.SUCCESS;
         } else {
-            return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+            return InteractionResult.TRY_WITH_EMPTY_HAND;
         }
     }
 
@@ -138,7 +141,7 @@ public class FatedAltarBlock extends Block implements SimpleWaterloggedBlock {
                         false);
             }
         }
-        return InteractionResult.SUCCESS_NO_ITEM_USED;
+        return InteractionResult.SUCCESS_SERVER;
     }
 
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
@@ -150,13 +153,12 @@ public class FatedAltarBlock extends Block implements SimpleWaterloggedBlock {
                 : super.getFluidState(blockState);
     }
 
-    protected BlockState updateShape(BlockState blockState, Direction direction, BlockState blockState2,
-            LevelAccessor levelAccessor, BlockPos blockPos, BlockPos blockPos2) {
+    protected BlockState updateShape(BlockState blockState, LevelReader levelReader, ScheduledTickAccess scheduledTickAccess, BlockPos blockPos, Direction direction, BlockPos blockPos2, BlockState blockState2, RandomSource randomSource) {
         if ((Boolean) blockState.getValue(WATERLOGGED)) {
-            levelAccessor.scheduleTick(blockPos, Fluids.WATER, Fluids.WATER.getTickDelay(levelAccessor));
+            scheduledTickAccess.scheduleTick(blockPos, Fluids.WATER, Fluids.WATER.getTickDelay(levelReader));
         }
 
-        return super.updateShape(blockState, direction, blockState2, levelAccessor, blockPos, blockPos2);
+        return super.updateShape(blockState, levelReader, scheduledTickAccess, blockPos, direction, blockPos2, blockState2, randomSource);
     }
 
     protected boolean isPathfindable(BlockState blockState, PathComputationType pathComputationType) {

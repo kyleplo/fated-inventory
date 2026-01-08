@@ -1,7 +1,7 @@
 package com.kyleplo.fatedinventory;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
 import java.util.Optional;
 
 import net.minecraft.core.HolderLookup.Provider;
@@ -48,7 +48,7 @@ public class FatedInventoryItem {
 
     public static Optional<FatedInventoryItem> parse (Provider provider, Tag tag) {
         CompoundTag tagCopy = (CompoundTag) tag.copy();
-        int count = tagCopy.getInt("count");
+        int count = tagCopy.getInt("count").orElse(0);
         tagCopy.putInt("count", 1);
         Optional<ItemStack> parsedItem = ItemStack.parse(provider, tagCopy);
 
@@ -65,11 +65,11 @@ public class FatedInventoryItem {
         return listFromItemStackList(items, list, flatten);
     }
 
-    public static ArrayList<FatedInventoryItem> listFromItemStackList(List<ItemStack> list, boolean flatten) {
+    public static ArrayList<FatedInventoryItem> listFromItemStackList(Collection<ItemStack> list, boolean flatten) {
         return listFromItemStackList(new ArrayList<FatedInventoryItem>(), list, flatten);
     }
 
-    public static ArrayList<FatedInventoryItem> listFromItemStackList(ArrayList<FatedInventoryItem> items, List<ItemStack> list, boolean flatten) {
+    public static ArrayList<FatedInventoryItem> listFromItemStackList(ArrayList<FatedInventoryItem> items, Collection<ItemStack> list, boolean flatten) {
         list.forEach((ItemStack item) -> {
             if (item.isEmpty() || 
                 EnchantmentHelper.has(item, EnchantmentEffectComponents.PREVENT_EQUIPMENT_DROP) || 

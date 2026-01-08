@@ -6,15 +6,9 @@
         "OOO"
     ],
     "key": {
-        "O": {
-            "item": "minecraft:crying_obsidian"
-        },
-        "E": {
-            "item": "minecraft:echo_shard"
-        },
-        "S": {
-            "item": "minecraft:cobblestone"
-        }
+        "O": "minecraft:crying_obsidian",
+        "E": "minecraft:echo_shard",
+        "S": "minecraft:cobblestone"
     },
     "result": {
         "id": "fated_inventory:fated_altar"

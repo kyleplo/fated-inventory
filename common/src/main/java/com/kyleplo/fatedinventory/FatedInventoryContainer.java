@@ -17,6 +17,9 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
+import com.kyleplo.fatedinventory.mixin.EntityEquipmentMixin;
+import com.kyleplo.fatedinventory.mixin.InventoryMixin;;
+
 public abstract class FatedInventoryContainer implements IFatedInventoryContainer {
     protected int experience = 0;
     protected int storedExperience = 0;
@@ -54,9 +57,8 @@ public abstract class FatedInventoryContainer implements IFatedInventoryContaine
 
         Inventory inventory = player.getInventory();
 
-        inventoryList = FatedInventoryItem.listFromItemStackList(inventory.items, true);
-        FatedInventoryItem.listFromItemStackList(inventoryList, inventory.armor, true);
-        FatedInventoryItem.listFromItemStackList(inventoryList, inventory.offhand, true);
+        inventoryList = FatedInventoryItem.listFromItemStackList(((InventoryMixin) inventory).getItems(), true);
+        FatedInventoryItem.listFromItemStackList(inventoryList, ((EntityEquipmentMixin) ((InventoryMixin) inventory).getEquipment()).getItems().values(), true);
         FatedInventoryItem.listFromItemStackList(inventoryList, FatedInventory.compatItems(player), true);
 
 //        inventoryList.forEach((FatedInventoryItem item) -> {
@@ -78,9 +80,8 @@ public abstract class FatedInventoryContainer implements IFatedInventoryContaine
 
         Inventory inventory = player.getInventory();
 
-        ArrayList<FatedInventoryItem> compareList = FatedInventoryItem.listFromItemStackList(inventory.items, false);
-        FatedInventoryItem.listFromItemStackList(compareList, inventory.armor, false);
-        FatedInventoryItem.listFromItemStackList(compareList, inventory.offhand, false);
+        ArrayList<FatedInventoryItem> compareList = FatedInventoryItem.listFromItemStackList(((InventoryMixin) inventory).getItems(), false);
+        FatedInventoryItem.listFromItemStackList(compareList, ((EntityEquipmentMixin) ((InventoryMixin) inventory).getEquipment()).getItems().values(), false);
         FatedInventoryItem.listFromItemStackList(compareList, FatedInventory.compatItems(player), false);
 
 //        compareList.forEach((FatedInventoryItem item) -> {
@@ -159,10 +160,10 @@ public abstract class FatedInventoryContainer implements IFatedInventoryContaine
     }
 
     public void readNbt(CompoundTag nbt, Provider provider) {
-        experience = nbt.getInt("experience");
-        storedExperience = nbt.getInt("storedExperience");
+        experience = nbt.getInt("experience").orElse(0);
+        storedExperience = nbt.getInt("storedExperience").orElse(0);
         
-        ListTag items = nbt.getList("items", ListTag.TAG_COMPOUND);
+        ListTag items = nbt.getList("items").orElse(new ListTag());
         inventoryList.clear();
         items.forEach((Tag tag) -> {
             Optional<FatedInventoryItem> parsedItem = FatedInventoryItem.parse(provider, tag);
@@ -171,7 +172,7 @@ public abstract class FatedInventoryContainer implements IFatedInventoryContaine
             }
         });
 
-        ListTag savedItems = nbt.getList("savedItems", ListTag.TAG_COMPOUND);
+        ListTag savedItems = nbt.getList("savedItems").orElse(new ListTag());;
         savedInventoryList.clear();
         savedItems.forEach((Tag tag) -> {
             Optional<FatedInventoryItem> parsedItem = FatedInventoryItem.parse(provider, tag);

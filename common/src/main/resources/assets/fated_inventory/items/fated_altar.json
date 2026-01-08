@@ -1,0 +1,6 @@
+{
+    "model": {
+        "type": "minecraft:model",
+        "model": "fated_inventory:block/fated_altar"
+    }
+}

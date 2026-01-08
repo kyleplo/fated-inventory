@@ -2,13 +2,16 @@ package com.kyleplo.fatedinventory;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import com.kyleplo.fatedinventory.blocks.FatedInventoryBlocks;
 import com.mojang.datafixers.util.Pair;
 
 import dev.architectury.injectables.annotations.ExpectPlatform;
 import net.minecraft.core.Holder;
+import net.minecraft.core.Holder.Reference;
 import net.minecraft.core.Registry;
+import net.minecraft.core.RegistryAccess.RegistryEntry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
@@ -33,7 +36,7 @@ public final class FatedInventory {
     }
 
     public static void handlePlayerDeath(Player player, DamageSource source) {
-        if (player.level().getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY)) {
+        if (player.level().isClientSide || player.level().getServer().getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY)) {
             return;
         }
 
@@ -43,7 +46,7 @@ public final class FatedInventory {
     }
 
     public static void handlePlayerRespawn(Player player) {
-        if (player.level().getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY)) {
+        if (player.level().isClientSide || player.level().getServer().getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY)) {
             return;
         }
 
@@ -86,8 +89,12 @@ public final class FatedInventory {
 
     public static void handleRegisterStructure (MinecraftServer server) {
         if (config.generateAltarBuildingsInVillages) {
-            Registry<StructureTemplatePool> templatePools = server.registryAccess().registry(Registries.TEMPLATE_POOL).get();
-			Registry<StructureProcessorList> processorLists = server.registryAccess().registry(Registries.PROCESSOR_LIST).get();
+            Registry<StructureTemplatePool> templatePools = (Registry<StructureTemplatePool>) server.registryAccess().registries().filter((RegistryEntry<?> entry) -> {
+                return entry.key().equals(Registries.TEMPLATE_POOL);
+            }).findAny().get().value();
+			Registry<StructureProcessorList> processorLists = (Registry<StructureProcessorList>) server.registryAccess().registries().filter((RegistryEntry<?> entry) -> {
+                return entry.key().equals(Registries.PROCESSOR_LIST);
+            }).findAny().get().value();
 
             addBuildingToPool(templatePools, processorLists, ResourceLocation.withDefaultNamespace("village/desert/houses"), MOD_ID + ":village/houses/altar_desert", config.villageAltarBuildingWeight);
             addBuildingToPool(templatePools, processorLists, ResourceLocation.withDefaultNamespace("village/plains/houses"), MOD_ID + ":village/houses/altar_plains", config.villageAltarBuildingWeight);
@@ -100,13 +107,15 @@ public final class FatedInventory {
     public static void addBuildingToPool(Registry<StructureTemplatePool> templatePoolRegistry,
             Registry<StructureProcessorList> processorListRegistry, ResourceLocation poolRL, String nbtPieceRL,
             int weight) {
-        StructureTemplatePool pool = templatePoolRegistry.get(poolRL);
-        if (pool == null)
+        Optional<Reference<StructureTemplatePool>> potentalPool = templatePoolRegistry.get(poolRL);
+        if (potentalPool.isEmpty())
             return;
+
+        StructureTemplatePool pool = potentalPool.get().value();
 
         ResourceLocation emptyProcessor = ResourceLocation.fromNamespaceAndPath("minecraft", "empty");
         Holder<StructureProcessorList> processorHolder = processorListRegistry
-                .getHolderOrThrow(ResourceKey.create(Registries.PROCESSOR_LIST, emptyProcessor));
+                .getOrThrow(ResourceKey.create(Registries.PROCESSOR_LIST, emptyProcessor));
 
         SinglePoolElement piece = SinglePoolElement.single(nbtPieceRL, processorHolder)
                 .apply(StructureTemplatePool.Projection.RIGID);

@@ -5,9 +5,9 @@ import java.util.List;
 import java.util.Optional;
 
 import com.kyleplo.fatedinventory.FatedInventoryItem;
-import io.wispforest.accessories.api.AccessoriesAPI;
 import io.wispforest.accessories.api.AccessoriesCapability;
-import io.wispforest.accessories.api.DropRule;
+import io.wispforest.accessories.api.core.AccessoryRegistry;
+import io.wispforest.accessories.api.events.DropRule;
 import io.wispforest.accessories.api.slot.SlotEntryReference;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.player.Player;
@@ -39,7 +39,8 @@ public class AccessoriesCompat {
             accessoriesCapability.getEquipped((ItemStack accessoryItem) -> {
                 return FatedInventoryItem.isCloseEnough(accessoryItem, matchItem);
             }).forEach((SlotEntryReference slotEntry) -> {
-                DropRule dropRule = AccessoriesAPI.getAccessory(slotEntry.stack()).getDropRule(slotEntry.stack(), slotEntry.reference(), damageSource);
+                ItemStack accessoryItem = slotEntry.stack();
+                DropRule dropRule = AccessoryRegistry.getAccessory(accessoryItem.getItem()).getDropRule(accessoryItem, slotEntry.reference(), damageSource);
                 if (removedCount < max && dropRule != DropRule.DESTROY && dropRule != DropRule.KEEP) {
                     if(slotEntry.reference().setStack(ItemStack.EMPTY)) {
                         removedCount += slotEntry.stack().getCount();

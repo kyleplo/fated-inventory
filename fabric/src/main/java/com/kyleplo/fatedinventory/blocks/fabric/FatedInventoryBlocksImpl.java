@@ -8,6 +8,8 @@ import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.item.BlockItem;
@@ -19,7 +21,7 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 public class FatedInventoryBlocksImpl {
     public static <B extends Block> void register (String name, Function<BlockBehaviour.Properties, ? extends B> func) {
         B block = func.apply(BlockBehaviour.Properties.of());
-        BlockItem blockItem = new BlockItem(block, new Item.Properties());
+        BlockItem blockItem = new BlockItem(block, new Item.Properties().setId(ResourceKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath(FatedInventory.MOD_ID, name))));
         Registry.register(BuiltInRegistries.ITEM, ResourceLocation.fromNamespaceAndPath(FatedInventory.MOD_ID, name), blockItem);
         Registry.register(BuiltInRegistries.BLOCK, ResourceLocation.fromNamespaceAndPath(FatedInventory.MOD_ID, name), block);
         ItemGroupEvents.modifyEntriesEvent(CreativeModeTabs.FUNCTIONAL_BLOCKS)
