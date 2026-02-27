@@ -16,21 +16,21 @@ logoFile = "src/main/resources/assets/fated_inventory/icon.png"
 [[dependencies.fated_inventory]]
 modId = "curios"
 type = "optional"
-versionRange = "[11,)"
+versionRange = "[14,)"
 ordering = "NONE"
 side = "BOTH"
 
 [[dependencies.fated_inventory]]
 modId = "neoforge"
 type = "required"
-versionRange = "[21.5,)"
+versionRange = "[21.11,)"
 ordering = "NONE"
 side = "BOTH"
 
 [[dependencies.fated_inventory]]
 modId = "minecraft"
 type = "required"
-versionRange = "[1.21.5,)"
+versionRange = "[1.21.11,)"
 ordering = "NONE"
 side = "BOTH"
 
