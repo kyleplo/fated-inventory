@@ -2,10 +2,10 @@ package com.kyleplo.fatedinventory;
 
 import java.util.List;
 
-import net.minecraft.core.HolderLookup.Provider;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 
 public interface IFatedInventoryContainer {
     public boolean hasStored();
@@ -13,8 +13,8 @@ public interface IFatedInventoryContainer {
     public void putInventory(Player player);
     public void compareInventory(Player player, DamageSource damageSource);
     public void dropInventoryFor(Player player);
-    public CompoundTag saveNbt(CompoundTag nbt, Provider provider);
-    public void readNbt(CompoundTag nbt, Provider provider);
+    public void serialize(ValueOutput output);
+    public void deserialize(ValueInput input);
     public void clearFatedInventory();
     public void clearStored();
     public int getExperience();

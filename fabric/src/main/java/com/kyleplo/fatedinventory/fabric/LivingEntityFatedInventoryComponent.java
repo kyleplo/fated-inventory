@@ -2,17 +2,17 @@ package com.kyleplo.fatedinventory.fabric;
 
 import com.kyleplo.fatedinventory.FatedInventoryContainer;
 
-import net.minecraft.core.HolderLookup.Provider;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 
 public class LivingEntityFatedInventoryComponent extends FatedInventoryContainer implements FatedInventoryComponent {
     @Override
-    public void readFromNbt(CompoundTag nbt, Provider provider) {
-        readNbt(nbt, provider);
+    public void readData(ValueInput readView) {
+        deserialize(readView);
     }
 
     @Override
-    public void writeToNbt(CompoundTag nbt, Provider provider) {
-        saveNbt(nbt, provider);
+    public void writeData(ValueOutput writeView) {
+        serialize(writeView);
     }
 }

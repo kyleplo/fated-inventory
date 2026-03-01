@@ -11,7 +11,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.Mth;
@@ -55,9 +55,9 @@ public class FatedAltarBlock extends Block implements SimpleWaterloggedBlock {
     public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
     public static final IntegerProperty CHARGE = IntegerProperty.create("charges", 0, 4);
     public static final TagKey<Item> CHARGES_FATED_ALTAR = TagKey.create(Registries.ITEM,
-            ResourceLocation.fromNamespaceAndPath(FatedInventory.MOD_ID, "charges_fated_altar"));
+            Identifier.fromNamespaceAndPath(FatedInventory.MOD_ID, "charges_fated_altar"));
     public static final TagKey<Item> SHEARS = TagKey.create(Registries.ITEM,
-            ResourceLocation.fromNamespaceAndPath("c", "tools/shear"));
+            Identifier.fromNamespaceAndPath("c", "tools/shear"));
 
     public MapCodec<FatedAltarBlock> codec() {
         return CODEC;
@@ -65,7 +65,7 @@ public class FatedAltarBlock extends Block implements SimpleWaterloggedBlock {
 
     public FatedAltarBlock(Properties properties) {
         super(properties
-                .setId(ResourceKey.create(Registries.BLOCK, ResourceLocation.fromNamespaceAndPath(FatedInventory.MOD_ID, "fated_altar")))
+                .setId(ResourceKey.create(Registries.BLOCK, Identifier.fromNamespaceAndPath(FatedInventory.MOD_ID, "fated_altar")))
                 .pushReaction(PushReaction.BLOCK)
                 .requiresCorrectToolForDrops()
                 .explosionResistance(1200f)

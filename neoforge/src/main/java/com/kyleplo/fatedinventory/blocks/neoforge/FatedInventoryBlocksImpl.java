@@ -11,7 +11,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
@@ -30,7 +30,7 @@ public class FatedInventoryBlocksImpl {
 
     public static <B extends Block> void register (String name, Function<BlockBehaviour.Properties, ? extends B> func) {
         DeferredBlock<B> block = BLOCKS.registerBlock(name, func);
-        itemsForCreativeTab.add(ITEMS.registerSimpleBlockItem(name, block, new Item.Properties().setId(ResourceKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath(FatedInventory.MOD_ID, name)))));
+        itemsForCreativeTab.add(ITEMS.registerSimpleBlockItem(name, block, () -> new Item.Properties().setId(ResourceKey.create(Registries.ITEM, Identifier.fromNamespaceAndPath(FatedInventory.MOD_ID, name)))));
     }
 
     public static <B extends Block> void registerBlockType (Function<BlockBehaviour.Properties, ? extends B> func) {
@@ -40,6 +40,6 @@ public class FatedInventoryBlocksImpl {
     }
 
     public static Holder<SoundEvent> registerSoundEvent (String name) {
-        return SOUNDS.register(name, () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(FatedInventory.MOD_ID, name)));
+        return SOUNDS.register(name, () -> SoundEvent.createVariableRangeEvent(Identifier.fromNamespaceAndPath(FatedInventory.MOD_ID, name)));
     }
 }

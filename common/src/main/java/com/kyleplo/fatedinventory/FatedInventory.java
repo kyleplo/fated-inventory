@@ -15,12 +15,13 @@ import net.minecraft.core.RegistryAccess.RegistryEntry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.GameRules;
+import net.minecraft.world.level.gamerules.GameRules;
 import net.minecraft.world.level.levelgen.structure.pools.SinglePoolElement;
 import net.minecraft.world.level.levelgen.structure.pools.StructurePoolElement;
 import net.minecraft.world.level.levelgen.structure.pools.StructureTemplatePool;
@@ -36,7 +37,7 @@ public final class FatedInventory {
     }
 
     public static void handlePlayerDeath(Player player, DamageSource source) {
-        if (player.level().isClientSide || player.level().getServer().getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY)) {
+        if (player.level().isClientSide() || ((ServerLevel) player.level()).getGameRules().get(GameRules.KEEP_INVENTORY)) {
             return;
         }
 
@@ -46,7 +47,7 @@ public final class FatedInventory {
     }
 
     public static void handlePlayerRespawn(Player player) {
-        if (player.level().isClientSide || player.level().getServer().getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY)) {
+        if (player.level().isClientSide() || ((ServerLevel) player.level()).getGameRules().get(GameRules.KEEP_INVENTORY)) {
             return;
         }
 
@@ -96,16 +97,16 @@ public final class FatedInventory {
                 return entry.key().equals(Registries.PROCESSOR_LIST);
             }).findAny().get().value();
 
-            addBuildingToPool(templatePools, processorLists, ResourceLocation.withDefaultNamespace("village/desert/houses"), MOD_ID + ":village/houses/altar_desert", config.villageAltarBuildingWeight);
-            addBuildingToPool(templatePools, processorLists, ResourceLocation.withDefaultNamespace("village/plains/houses"), MOD_ID + ":village/houses/altar_plains", config.villageAltarBuildingWeight);
-            addBuildingToPool(templatePools, processorLists, ResourceLocation.withDefaultNamespace("village/savanna/houses"), MOD_ID + ":village/houses/altar_savanna", config.villageAltarBuildingWeight);
-            addBuildingToPool(templatePools, processorLists, ResourceLocation.withDefaultNamespace("village/snowy/houses"), MOD_ID + ":village/houses/altar_snowy", config.villageAltarBuildingWeight);
-            addBuildingToPool(templatePools, processorLists, ResourceLocation.withDefaultNamespace("village/taiga/houses"), MOD_ID + ":village/houses/altar_taiga", config.villageAltarBuildingWeight);
+            addBuildingToPool(templatePools, processorLists, Identifier.withDefaultNamespace("village/desert/houses"), MOD_ID + ":village/houses/altar_desert", config.villageAltarBuildingWeight);
+            addBuildingToPool(templatePools, processorLists, Identifier.withDefaultNamespace("village/plains/houses"), MOD_ID + ":village/houses/altar_plains", config.villageAltarBuildingWeight);
+            addBuildingToPool(templatePools, processorLists, Identifier.withDefaultNamespace("village/savanna/houses"), MOD_ID + ":village/houses/altar_savanna", config.villageAltarBuildingWeight);
+            addBuildingToPool(templatePools, processorLists, Identifier.withDefaultNamespace("village/snowy/houses"), MOD_ID + ":village/houses/altar_snowy", config.villageAltarBuildingWeight);
+            addBuildingToPool(templatePools, processorLists, Identifier.withDefaultNamespace("village/taiga/houses"), MOD_ID + ":village/houses/altar_taiga", config.villageAltarBuildingWeight);
         }
     }
 
     public static void addBuildingToPool(Registry<StructureTemplatePool> templatePoolRegistry,
-            Registry<StructureProcessorList> processorListRegistry, ResourceLocation poolRL, String nbtPieceRL,
+            Registry<StructureProcessorList> processorListRegistry, Identifier poolRL, String nbtPieceRL,
             int weight) {
         Optional<Reference<StructureTemplatePool>> potentalPool = templatePoolRegistry.get(poolRL);
         if (potentalPool.isEmpty())
@@ -113,7 +114,7 @@ public final class FatedInventory {
 
         StructureTemplatePool pool = potentalPool.get().value();
 
-        ResourceLocation emptyProcessor = ResourceLocation.fromNamespaceAndPath("minecraft", "empty");
+        Identifier emptyProcessor = Identifier.fromNamespaceAndPath("minecraft", "empty");
         Holder<StructureProcessorList> processorHolder = processorListRegistry
                 .getOrThrow(ResourceKey.create(Registries.PROCESSOR_LIST, emptyProcessor));
 

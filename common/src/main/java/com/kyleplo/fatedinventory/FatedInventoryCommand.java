@@ -13,7 +13,7 @@ import net.minecraft.commands.arguments.EntityArgument;
 public class FatedInventoryCommand {
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(Commands.literal("fatedinventory")
-            .requires(source -> source.hasPermission(2))
+            .requires(Commands.hasPermission(Commands.LEVEL_GAMEMASTERS))
             .then(Commands.argument("target", EntityArgument.player())
                 .then(Commands.literal("seal")
                     .executes((CommandContext<CommandSourceStack> context) -> {

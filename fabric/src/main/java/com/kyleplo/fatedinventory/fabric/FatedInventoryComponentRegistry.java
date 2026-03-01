@@ -8,10 +8,10 @@ import org.ladysnake.cca.api.v3.entity.RespawnCopyStrategy;
 
 import com.kyleplo.fatedinventory.FatedInventory;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public final class FatedInventoryComponentRegistry implements EntityComponentInitializer {
-    public static final ComponentKey<FatedInventoryComponent> FATED_INVENTORY = ComponentRegistry.getOrCreate(ResourceLocation.fromNamespaceAndPath(FatedInventory.MOD_ID, "fated_inventory"), FatedInventoryComponent.class);
+    public static final ComponentKey<FatedInventoryComponent> FATED_INVENTORY = ComponentRegistry.getOrCreate(Identifier.fromNamespaceAndPath(FatedInventory.MOD_ID, "fated_inventory"), FatedInventoryComponent.class);
 
     @Override
     public void registerEntityComponentFactories(EntityComponentFactoryRegistry registry) {

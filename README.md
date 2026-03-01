@@ -10,11 +10,13 @@ By default, the Altar of Fate can be used at no cost other than obtaining it. Th
 Items that store other items, such as Shulker Boxes, Bundles, and Backpacks are too complex to be fully sealed with your fate. Thus they will only be sealed with your fate if their contents do not change in between being sealed and dying. If you ever can't find an item in the Altar of Fate, check to see if it was dropped at your death location instead.
 
 ## Compatibility
-Fated Inventory includes compatibility with [Trinkets](https://modrinth.com/mod/trinkets), [Curios](https://modrinth.com/mod/curios), and [Accessories](https://modrinth.com/mod/accessories) - items placed in the inventory slots added by those mods should correctly be saved and retrieved using the Altar of Fate.
+Fated Inventory includes compatibility with [Trinkets](https://modrinth.com/mod/trinkets) (including [Trinkets Canary](https://modrinth.com/mod/trinkets-canary), [Trinkets Updated](https://modrinth.com/mod/trinkets-updated), and [Trinkets Canary Fork](https://modrinth.com/mod/trinkets-continued) for 1.21.11), [Curios](https://modrinth.com/mod/curios), and [Accessories](https://modrinth.com/mod/accessories) (not yet available for 1.21.11) - items placed in the inventory slots added by those mods should correctly be saved and retrieved using the Altar of Fate.
 
-Fated Inventory may be incompatible with some gravestone mods, from testing [You're in Grave Danger](https://modrinth.com/mod/yigd) and the graves from [Quark Oddities](https://modrinth.com/mod/quark-oddities) works as expected.
+Fated Inventory may be incompatible with some gravestone mods, from testing [Pneumono's Gravestones](https://modrinth.com/mod/pneumono_gravestones/), [You're in Grave Danger](https://modrinth.com/mod/yigd) and the graves from [Quark Oddities](https://modrinth.com/mod/quark-oddities) work as expected.
 
 Fated Inventory may have compatibility issues with mods that alter death mechanics.
+
+If upgrading to 1.21.11 or above from an earlier version, all fated inventory data will be reset as the data format changed. After upgrading, remember to seal your fate again.
 
 ## Configuration
 Fated Inventory is highly customizable, providing several configuration options and datapack item tags. Note that not all of these configuration options are present on all versions, in particular the 1.20.1 versions are missing some features.
@@ -27,7 +29,6 @@ The config file (`fated_inventory.json`) is not automatically synced between cli
 - `villageAltarBuildingWeight` - weight for generating village altar buildings - higher numbers are more common, must be an integer - defaults to 2
 - `anyNonstackableAllowsModifiedComponents` - whether all nonstackable items should persist in the Altar of Fate even if their components have changed between being added and retrieved - defaults to false
 - `anyDurabilityItemAllowsModifiedComponents` - whether all items with durability bars should persist in the Altar of Fate even if their components have changed between being added and retrieved - defaults to true
-- `experimentalFlattenContainerItems` - **experimental**, whether to attempt to flatten container items (Shulker Boxes, Bundles, Backpacks, etc.) to better track items in them - defaults to false
 ### Item Tags
 - `fated_inventory:charges_fated_altar` - items that can be used to charge to Altar of Fate when charging is enabled - defaults to Glowstone
   - Note that this item will also be generated in the loot chests in some of the village altar buildings added by this mod - to disable that, modify the loot table `fated_inventory:chests/altar_building`

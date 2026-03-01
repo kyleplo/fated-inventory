@@ -5,7 +5,7 @@ import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.damagesource.DamageSource;
@@ -22,13 +22,13 @@ public final class FatedInventoryFabric implements ModInitializer {
         // This code runs as soon as Minecraft is in a mod-load-ready state.
         // However, some things (like resources) may still be uninitialized.
         // Proceed with mild caution.
-        ServerPlayerEvents.AFTER_RESPAWN.register(ResourceLocation.fromNamespaceAndPath(FatedInventory.MOD_ID, "handle_player_respawn"), (ServerPlayer oldPlayer, ServerPlayer newPlayer, boolean alive) -> {
+        ServerPlayerEvents.AFTER_RESPAWN.register(Identifier.fromNamespaceAndPath(FatedInventory.MOD_ID, "handle_player_respawn"), (ServerPlayer oldPlayer, ServerPlayer newPlayer, boolean alive) -> {
             if (!alive) {
                 FatedInventory.handlePlayerRespawn(newPlayer);
             }
         });
 
-        ServerLivingEntityEvents.ALLOW_DEATH.register(ResourceLocation.fromNamespaceAndPath(FatedInventory.MOD_ID, "handle_player_death"), (LivingEntity entity, DamageSource source, float amount) -> {
+        ServerLivingEntityEvents.ALLOW_DEATH.register(Identifier.fromNamespaceAndPath(FatedInventory.MOD_ID, "handle_player_death"), (LivingEntity entity, DamageSource source, float amount) -> {
             if (entity instanceof Player) {
                 FatedInventory.handlePlayerDeath((Player) entity, source);
             }

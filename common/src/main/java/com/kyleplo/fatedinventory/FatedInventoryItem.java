@@ -2,26 +2,30 @@ package com.kyleplo.fatedinventory;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Optional;
+import java.util.List;
 
-import net.minecraft.core.HolderLookup.Provider;
+import com.mojang.datafixers.util.Pair;
+import com.mojang.serialization.Codec;
+
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.component.BundleContents;
-import net.minecraft.world.item.component.ItemContainerContents;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentEffectComponents;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 
 public class FatedInventoryItem {
-    public static final TagKey<Item> NOT_SAVED_IN_ALTAR = TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath(FatedInventory.MOD_ID, "not_saved_in_altar"));
-    public static final TagKey<Enchantment> NOT_SAVED_IN_ALTAR_ENCHANTMENT = TagKey.create(Registries.ENCHANTMENT, ResourceLocation.fromNamespaceAndPath(FatedInventory.MOD_ID, "not_saved_in_altar"));
+    public static final TagKey<Item> NOT_SAVED_IN_ALTAR = TagKey.create(Registries.ITEM, Identifier.fromNamespaceAndPath(FatedInventory.MOD_ID, "not_saved_in_altar"));
+    public static final TagKey<Enchantment> NOT_SAVED_IN_ALTAR_ENCHANTMENT = TagKey.create(Registries.ENCHANTMENT, Identifier.fromNamespaceAndPath(FatedInventory.MOD_ID, "not_saved_in_altar"));
+
+    public static final Codec<Pair<ItemStack,Integer>> CODEC = Codec.pair(
+        ItemStack.SINGLE_ITEM_CODEC.fieldOf("item").codec(),
+        Codec.INT.fieldOf("count").codec()
+    );
+    public static final Codec<List<Pair<ItemStack, Integer>>> LIST_CODEC = CODEC.listOf();
 
     public ItemStack item;
     public int count;
@@ -40,36 +44,17 @@ public class FatedInventoryItem {
         return item.isEmpty() || count <= 0;
     }
 
-    public CompoundTag save (Provider provider) {
-        CompoundTag itemTag = (CompoundTag) this.item.save(provider);
-        itemTag.putInt("count", count);
-        return itemTag;
-    }
-
-    public static Optional<FatedInventoryItem> parse (Provider provider, Tag tag) {
-        CompoundTag tagCopy = (CompoundTag) tag.copy();
-        int count = tagCopy.getInt("count").orElse(0);
-        tagCopy.putInt("count", 1);
-        Optional<ItemStack> parsedItem = ItemStack.parse(provider, tagCopy);
-
-        if (count == 0 || parsedItem.isEmpty()) {
-            return Optional.empty();
-        } else {
-            return Optional.of(new FatedInventoryItem(parsedItem.get(), count));
-        }
-    }
-
-    public static ArrayList<FatedInventoryItem> listFromItemStack(ArrayList<FatedInventoryItem> items, ItemStack item, boolean flatten) {
+    public static ArrayList<FatedInventoryItem> listFromItemStack(ArrayList<FatedInventoryItem> items, ItemStack item) {
         ArrayList<ItemStack> list = new ArrayList<>(1);
         list.add(item);
-        return listFromItemStackList(items, list, flatten);
+        return listFromItemStackList(items, list);
     }
 
-    public static ArrayList<FatedInventoryItem> listFromItemStackList(Collection<ItemStack> list, boolean flatten) {
-        return listFromItemStackList(new ArrayList<FatedInventoryItem>(), list, flatten);
+    public static ArrayList<FatedInventoryItem> listFromItemStackList(Collection<ItemStack> list) {
+        return listFromItemStackList(new ArrayList<FatedInventoryItem>(), list);
     }
 
-    public static ArrayList<FatedInventoryItem> listFromItemStackList(ArrayList<FatedInventoryItem> items, Collection<ItemStack> list, boolean flatten) {
+    public static ArrayList<FatedInventoryItem> listFromItemStackList(ArrayList<FatedInventoryItem> items, Collection<ItemStack> list) {
         list.forEach((ItemStack item) -> {
             if (item.isEmpty() || 
                 EnchantmentHelper.has(item, EnchantmentEffectComponents.PREVENT_EQUIPMENT_DROP) || 
@@ -83,25 +68,6 @@ public class FatedInventoryItem {
                 if (ItemStack.isSameItemSameComponents(matchItem.item, item) && item.isStackable()) {
                     matchItem.count += item.getCount();
                     return;
-                }
-            }
-
-            if (flatten && FatedInventory.config.experimentalFlattenContainerItems) {
-                if (item.has(DataComponents.CONTAINER)) {
-                    ItemContainerContents itemContainer = item.get(DataComponents.CONTAINER);
-                    ArrayList<ItemStack> containerItemList = new ArrayList<ItemStack>();
-                    for (ItemStack containerItem : itemContainer.nonEmptyItems()) {
-                        containerItemList.add(containerItem);
-                    };
-                    listFromItemStackList(items, containerItemList, true);
-                }
-                if (item.has(DataComponents.BUNDLE_CONTENTS)) {
-                    BundleContents bundleContents = item.get(DataComponents.BUNDLE_CONTENTS);
-                    ArrayList<ItemStack> containerItemList = new ArrayList<ItemStack>();
-                    for (ItemStack containerItem : bundleContents.items()) {
-                        containerItemList.add(containerItem);
-                    };
-                    listFromItemStackList(items, containerItemList, true);
                 }
             }
 

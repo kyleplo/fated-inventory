@@ -1,4 +1,4 @@
-package com.kyleplo.fatedinventory.compat;
+/*package com.kyleplo.fatedinventory.compat;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,3 +52,4 @@ public class AccessoriesCompat {
         return removedCount;
     }
 }
+*/
