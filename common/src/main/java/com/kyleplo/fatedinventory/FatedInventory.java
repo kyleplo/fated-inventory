@@ -6,7 +6,10 @@ import java.util.List;
 import com.kyleplo.fatedinventory.blocks.FatedInventoryBlocks;
 
 import dev.architectury.injectables.annotations.ExpectPlatform;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -22,7 +25,7 @@ public final class FatedInventory {
     }
 
     public static void handlePlayerDeath(Player player, DamageSource source) {
-        if (player.level().getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY)) {
+        if (player.level().getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY) || player.getInventory().contains(TagKey.create(Registries.ITEM, new ResourceLocation(MOD_ID, "death_protection")))) {
             return;
         }
 
