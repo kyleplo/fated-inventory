@@ -25,8 +25,6 @@ public class Config {
     public boolean fatedAltarRequiresCharges = false;
     public boolean runningOutOfChargesClearsFate = true;
     public boolean showMessageOnRespawn = true;
-    public boolean generateAltarBuildingsInVillages = true;
-    public int villageAltarBuildingWeight = 2;
     public boolean anyNonstackableAllowsModifiedComponents = false;
     public boolean anyDurabilityItemAllowsModifiedComponents = true;
 
