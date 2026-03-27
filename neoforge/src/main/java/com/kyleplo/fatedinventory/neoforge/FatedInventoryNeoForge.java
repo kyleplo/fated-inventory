@@ -10,7 +10,6 @@ import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent.PlayerRespawnEvent;
-import net.neoforged.neoforge.event.server.ServerAboutToStartEvent;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
 
@@ -31,7 +30,6 @@ public final class FatedInventoryNeoForge {
     public FatedInventoryNeoForge(IEventBus modBus) {
         NeoForge.EVENT_BUS.addListener(FatedInventoryNeoForge::onLivingDeath);
         NeoForge.EVENT_BUS.addListener(FatedInventoryNeoForge::onPlayerRespawn);
-        NeoForge.EVENT_BUS.addListener(FatedInventoryNeoForge::onServerAboutToStart);
         NeoForge.EVENT_BUS.addListener(FatedInventoryNeoForge::onRegisterCommands);
         modBus.addListener(FatedInventoryNeoForge::onBuildCreativeModeTabContents);
 
@@ -65,10 +63,6 @@ public final class FatedInventoryNeoForge {
                 event.accept(item);
             });
         }
-    }
-
-    private static void onServerAboutToStart (ServerAboutToStartEvent event) {
-        FatedInventory.handleRegisterStructure(event.getServer());
     }
 
     private static void onRegisterCommands (RegisterCommandsEvent event) {
