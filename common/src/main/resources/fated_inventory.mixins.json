@@ -4,9 +4,7 @@
     "compatibilityLevel": "JAVA_17",
     "minVersion": "0.8",
     "client": [],
-    "mixins": [
-        "StructureTemplatePoolMixin"
-    ],
+    "mixins": [],
     "injectors": {
         "defaultRequire": 1
     }

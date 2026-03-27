@@ -16,7 +16,6 @@ import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent.PlayerRespawnEvent;
-import net.minecraftforge.event.server.ServerAboutToStartEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -36,7 +35,6 @@ public final class FatedInventoryForge {
         
         MinecraftForge.EVENT_BUS.addListener(FatedInventoryForge::onLivingDeath);
         MinecraftForge.EVENT_BUS.addListener(FatedInventoryForge::onPlayerRespawn);
-        MinecraftForge.EVENT_BUS.addListener(FatedInventoryForge::onServerAboutToStart);
         MinecraftForge.EVENT_BUS.addListener(FatedInventoryForge::onRegisterCommands);
         modBus.addListener(FatedInventoryForge::onRegisterCapabilities);
         modBus.addListener(FatedInventoryForge::onBuildCreativeModeTabContents);
@@ -92,10 +90,6 @@ public final class FatedInventoryForge {
                 event.accept(item);
             });
         }
-    }
-
-    private static void onServerAboutToStart (ServerAboutToStartEvent event) {
-        FatedInventory.handleRegisterStructure(event.getServer());
     }
 
     private static void onRegisterCommands (RegisterCommandsEvent event) {

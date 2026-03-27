@@ -21,6 +21,13 @@ ordering = "NONE"
 side = "BOTH"
 
 [[dependencies.fated_inventory]]
+modId = "lithostitched"
+mandatory = true
+versionRange = "[1.4.9,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.fated_inventory]]
 modId = "forge"
 mandatory = true
 versionRange = "[47,)"
