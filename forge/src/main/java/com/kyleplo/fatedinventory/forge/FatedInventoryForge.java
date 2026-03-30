@@ -13,7 +13,6 @@ import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.event.RegisterCommandsEvent;
-import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent.PlayerRespawnEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -33,7 +32,6 @@ public final class FatedInventoryForge {
         @SuppressWarnings("removal")
         IEventBus modBus = FMLJavaModLoadingContext.get().getModEventBus();
         
-        MinecraftForge.EVENT_BUS.addListener(FatedInventoryForge::onLivingDeath);
         MinecraftForge.EVENT_BUS.addListener(FatedInventoryForge::onPlayerRespawn);
         MinecraftForge.EVENT_BUS.addListener(FatedInventoryForge::onRegisterCommands);
         modBus.addListener(FatedInventoryForge::onRegisterCapabilities);
@@ -75,12 +73,6 @@ public final class FatedInventoryForge {
         Player player = event.getEntity();
         if (!event.isEndConquered() && !player.level().isClientSide()) {
             FatedInventory.handlePlayerRespawn(player);
-        }
-    }
-
-    private static void onLivingDeath (LivingDeathEvent event) {
-        if (event.getEntity() instanceof Player) {
-            FatedInventory.handlePlayerDeath((Player) event.getEntity(), event.getSource());
         }
     }
 
