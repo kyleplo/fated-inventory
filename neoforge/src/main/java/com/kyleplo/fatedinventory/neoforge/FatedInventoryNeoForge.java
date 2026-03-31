@@ -8,7 +8,6 @@ import net.neoforged.neoforge.attachment.AttachmentType;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
-import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent.PlayerRespawnEvent;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
@@ -28,7 +27,6 @@ public final class FatedInventoryNeoForge {
 );
 
     public FatedInventoryNeoForge(IEventBus modBus) {
-        NeoForge.EVENT_BUS.addListener(FatedInventoryNeoForge::onLivingDeath);
         NeoForge.EVENT_BUS.addListener(FatedInventoryNeoForge::onPlayerRespawn);
         NeoForge.EVENT_BUS.addListener(FatedInventoryNeoForge::onRegisterCommands);
         modBus.addListener(FatedInventoryNeoForge::onBuildCreativeModeTabContents);
@@ -48,12 +46,6 @@ public final class FatedInventoryNeoForge {
         Player player = event.getEntity();
         if (!event.isEndConquered() && !player.level().isClientSide()) {
             FatedInventory.handlePlayerRespawn(player);
-        }
-    }
-
-    private static void onLivingDeath (LivingDeathEvent event) {
-        if (event.getEntity() instanceof Player) {
-            FatedInventory.handlePlayerDeath((Player) event.getEntity(), event.getSource());
         }
     }
 
