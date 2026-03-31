@@ -2,29 +2,15 @@ package com.kyleplo.fatedinventory;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import com.kyleplo.fatedinventory.blocks.FatedInventoryBlocks;
-import com.mojang.datafixers.util.Pair;
 
 import dev.architectury.injectables.annotations.ExpectPlatform;
-import net.minecraft.core.Holder;
-import net.minecraft.core.Holder.Reference;
-import net.minecraft.core.Registry;
-import net.minecraft.core.RegistryAccess.RegistryEntry;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.GameRules;
-import net.minecraft.world.level.levelgen.structure.pools.SinglePoolElement;
-import net.minecraft.world.level.levelgen.structure.pools.StructurePoolElement;
-import net.minecraft.world.level.levelgen.structure.pools.StructureTemplatePool;
-import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessorList;
 
 public final class FatedInventory {
     public static final String MOD_ID = "fated_inventory";
@@ -85,47 +71,5 @@ public final class FatedInventory {
         } else {
             return (int) ((4.5 * levels * levels) - (162.5 * levels) + 2220);
         }
-    }
-
-    public static void handleRegisterStructure (MinecraftServer server) {
-        if (config.generateAltarBuildingsInVillages) {
-            Registry<StructureTemplatePool> templatePools = (Registry<StructureTemplatePool>) server.registryAccess().registries().filter((RegistryEntry<?> entry) -> {
-                return entry.key().equals(Registries.TEMPLATE_POOL);
-            }).findAny().get().value();
-			Registry<StructureProcessorList> processorLists = (Registry<StructureProcessorList>) server.registryAccess().registries().filter((RegistryEntry<?> entry) -> {
-                return entry.key().equals(Registries.PROCESSOR_LIST);
-            }).findAny().get().value();
-
-            addBuildingToPool(templatePools, processorLists, ResourceLocation.withDefaultNamespace("village/desert/houses"), MOD_ID + ":village/houses/altar_desert", config.villageAltarBuildingWeight);
-            addBuildingToPool(templatePools, processorLists, ResourceLocation.withDefaultNamespace("village/plains/houses"), MOD_ID + ":village/houses/altar_plains", config.villageAltarBuildingWeight);
-            addBuildingToPool(templatePools, processorLists, ResourceLocation.withDefaultNamespace("village/savanna/houses"), MOD_ID + ":village/houses/altar_savanna", config.villageAltarBuildingWeight);
-            addBuildingToPool(templatePools, processorLists, ResourceLocation.withDefaultNamespace("village/snowy/houses"), MOD_ID + ":village/houses/altar_snowy", config.villageAltarBuildingWeight);
-            addBuildingToPool(templatePools, processorLists, ResourceLocation.withDefaultNamespace("village/taiga/houses"), MOD_ID + ":village/houses/altar_taiga", config.villageAltarBuildingWeight);
-        }
-    }
-
-    public static void addBuildingToPool(Registry<StructureTemplatePool> templatePoolRegistry,
-            Registry<StructureProcessorList> processorListRegistry, ResourceLocation poolRL, String nbtPieceRL,
-            int weight) {
-        Optional<Reference<StructureTemplatePool>> potentalPool = templatePoolRegistry.get(poolRL);
-        if (potentalPool.isEmpty())
-            return;
-
-        StructureTemplatePool pool = potentalPool.get().value();
-
-        ResourceLocation emptyProcessor = ResourceLocation.fromNamespaceAndPath("minecraft", "empty");
-        Holder<StructureProcessorList> processorHolder = processorListRegistry
-                .getOrThrow(ResourceKey.create(Registries.PROCESSOR_LIST, emptyProcessor));
-
-        SinglePoolElement piece = SinglePoolElement.single(nbtPieceRL, processorHolder)
-                .apply(StructureTemplatePool.Projection.RIGID);
-
-        for (int i = 0; i < weight; i++) {
-            pool.templates.add(piece);
-        }
-
-        List<Pair<StructurePoolElement, Integer>> listOfPieceEntries = new ArrayList<>(pool.rawTemplates);
-        listOfPieceEntries.add(new Pair<>(piece, weight));
-        pool.rawTemplates = listOfPieceEntries;
     }
 }
