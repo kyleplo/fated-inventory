@@ -7,7 +7,8 @@
   ],
   "mixins": [
     "InventoryMixin",
-    "EntityEquipmentMixin"
+    "EntityEquipmentMixin",
+    "PlayerMixin"
   ],
   "injectors": {
     "defaultRequire": 1
