@@ -34,5 +34,12 @@ versionRange = "[1.21.11,)"
 ordering = "NONE"
 side = "BOTH"
 
+[[dependencies.fated_inventory]]
+modId = "lithostitched"
+type = "required"
+versionRange = "[1.5.3,)"
+ordering = "NONE"
+side = "BOTH"
+
 [[mixins]]
 config = "fated_inventory.mixins.json"

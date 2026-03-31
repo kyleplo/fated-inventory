@@ -31,7 +31,8 @@
   "depends": {
     "fabricloader": ">=0.18.4",
     "minecraft": "~1.21.11",
-    "java": ">=21"
+    "java": ">=21",
+    "lithostitched": ">=1.5.3"
   },
   "custom": {
         "cardinal-components": [

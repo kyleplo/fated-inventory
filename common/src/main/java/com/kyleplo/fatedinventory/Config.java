@@ -14,7 +14,7 @@ import com.google.gson.GsonBuilder;
 
 public class Config {
     private static Gson gson = new GsonBuilder().setPrettyPrinting().create();
-    private static String currentVersion = "1.2.1";
+    private static String currentVersion = "1.3.0";
 
     //Config Default Values
     public String CONFIG_VERSION_DO_NOT_TOUCH_PLS = currentVersion;
@@ -25,8 +25,6 @@ public class Config {
     public boolean fatedAltarRequiresCharges = false;
     public boolean runningOutOfChargesClearsFate = true;
     public boolean showMessageOnRespawn = true;
-    public boolean generateAltarBuildingsInVillages = true;
-    public int villageAltarBuildingWeight = 2;
     public boolean anyNonstackableAllowsModifiedComponents = false;
     public boolean anyDurabilityItemAllowsModifiedComponents = true;
 
