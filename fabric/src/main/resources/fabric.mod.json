@@ -25,6 +25,9 @@
       "com.kyleplo.fatedinventory.fabric.FatedInventoryComponentRegistry"
     ]
   },
+  "mixins": [
+    "fated_inventory.mixins.json"
+  ],
   "depends": {
     "fabricloader": ">=0.16.14",
     "minecraft": "~1.21.1",
